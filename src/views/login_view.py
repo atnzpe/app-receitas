@@ -1,23 +1,14 @@
-# CÓDIGO COMPLETO E COMENTADO
-"""
-A View de Login.
-Responsável apenas pela UI (controles Flet).
-"""
+# CÓDIGO ALTERADO E COMENTADO
 import flet as ft
 from src.viewmodels.login_viewmodel import LoginViewModel
+from src.views.components.app_footer import AppFooter # (NOVO)
 
 def LoginView(page: ft.Page) -> ft.View:
     """
     Retorna a ft.View para a rota de Login.
-    Usamos uma função em vez de uma classe para Views de Rota.
     """
     
-    # 1. Instanciar o ViewModel
     vm = LoginViewModel(page)
-    
-    # 2. Criar os Controles
-    title = ft.Text("App de Receitas", size=32, weight=ft.FontWeight.BOLD)
-    subtitle = ft.Text("Faça login para continuar", size=18, color=ft.Colors.GREY_700)
     
     email_field = ft.TextField(
         label="Email",
@@ -35,54 +26,68 @@ def LoginView(page: ft.Page) -> ft.View:
     login_button = ft.ElevatedButton(
         text="Entrar",
         icon=ft.Icons.LOGIN,
-        on_click=vm.on_login_click, # 3. Bindar evento ao ViewModel
+        on_click=vm.on_login_click,
         width=float('inf')
     )
     
     register_button = ft.TextButton(
         text="Não tem uma conta? Registre-se aqui.",
-        on_click=vm.on_navigate_to_register, # 3. Bindar evento ao ViewModel
+        on_click=vm.on_navigate_to_register,
         width=float('inf')
     )
     
-    # 4. Passar referências de controle para o ViewModel
     vm.set_controls(email_field, password_field)
 
-    # 5. Retornar a ft.View
+    # (NOVO) Card centralizado do formulário
+    login_form_card = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.Text("App de Receitas", size=32, weight=ft.FontWeight.BOLD),
+                ft.Text("Faça login para continuar", size=18, color=ft.Colors.GREY_700),
+                ft.Divider(height=20, color=ft.Colors.TRANSPARENT),
+                email_field,
+                password_field,
+                login_button,
+                register_button
+            ],
+            spacing=15,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            width=350, # Largura fixa para o card
+        ),
+        width=400,
+        padding=20,
+        border_radius=10,
+        shadow=ft.BoxShadow(
+            spread_radius=1,
+            blur_radius=15,
+            color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+            offset=ft.Offset(0, 5),
+        ),
+        bgcolor=ft.Colors.WHITE,
+        bgcolor_dark=ft.Colors.with_opacity(0.03, ft.Colors.WHITE10),
+    )
+
     return ft.View(
         route="/login",
         controls=[
-            ft.Container(
-                content=ft.Column(
-                    controls=[
-                        title,
-                        subtitle,
-                        ft.Divider(height=20, color=ft.Colors.TRANSPARENT),
-                        email_field,
-                        password_field,
-                        login_button,
-                        register_button
-                    ],
-                    spacing=15,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                width=400,
-                padding=20,
-                border_radius=10,
-                shadow=ft.BoxShadow(
-                    spread_radius=1,
-                    blur_radius=15,
-                    color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
-                    offset=ft.Offset(0, 5),
-                ),
-                # Adaptação ao tema
-                bgcolor=ft.Colors.WHITE,
-                bgcolor_dark=ft.Colors.with_opacity(0.03, ft.Colors.WHITE10),
+            # (ALTERADO) Layout em Coluna para empurrar o rodapé para baixo
+            ft.Column(
+                controls=[
+                    # Container centralizado (ocupa espaço expandido)
+                    ft.Container(
+                        content=login_form_card,
+                        alignment=ft.alignment.center,
+                        expand=True
+                    ),
+                    # Rodapé
+                    AppFooter()
+                ],
+                # Distribui o espaço: formulário no centro (expandido), rodapé embaixo
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                expand=True
             )
         ],
-        vertical_alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        # Fundo da página de login
+        padding=0, # Remove padding da View
         bgcolor=ft.Colors.GREY_50,
         bgcolor_dark=ft.Colors.GREY_900
     )
