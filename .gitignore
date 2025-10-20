@@ -1,0 +1,26 @@
+# CÓDIGO COMPLETO E COMENTADO
+# --- Ambientes Virtuais ---
+# Ignora a pasta do ambiente virtual (venv)
+venv/
+.venv/
+env/
+.env/
+
+# --- Banco de Dados Local (CRÍTICO) ---
+# Ignora todos os arquivos dentro da pasta /data
+# Isso impede que o recipes.db seja versionado (Offline-First)
+/data/
+
+# --- Cache e Arquivos compilados do Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Arquivos de Cache de Testes ---
+.pytest_cache/
+.coverage
+
+# --- Configurações de IDE ---
+.vscode/
+.idea/
+*.swp
