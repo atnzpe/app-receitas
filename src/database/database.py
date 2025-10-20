@@ -31,6 +31,15 @@ def init_database():
         
         # Tabela de Categorias
         cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            hashed_password TEXT NOT NULL
+        );
+        """)
+        
+        cursor.execute("""
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
@@ -47,7 +56,9 @@ def init_database():
             source_url TEXT,
             image_path TEXT,
             category_id INTEGER,
-            FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL
+            user_id INTEGER, -- (NOVA COLUNA) Vincula receita ao usuário
+            FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
         );
         """)
 
@@ -64,7 +75,7 @@ def init_database():
         """)
         
         conn.commit()
-        print("Tabelas 'categories', 'recipes', e 'ingredients' verificadas/criadas.")
+        print("Tabelas 'users', 'categories', 'recipes', e 'ingredients' verificadas/criadas.")
         
     except sqlite3.Error as e:
         print(f"Erro ao inicializar o banco de dados: {e}")
@@ -80,7 +91,7 @@ def get_db_connection():
     conn = None
     try:
         conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row  # Permite acesso estilo dict
+        conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON;")
         return conn
     except sqlite3.Error as e:
