@@ -1,20 +1,22 @@
-# CÓDIGO ALTERADO E COMENTADO
 import flet as ft
 from src.viewmodels.login_viewmodel import LoginViewModel
 from src.views.components.app_footer import AppFooter
+from src.utils.theme import AppDimensions, AppFonts
 
 def LoginView(page: ft.Page) -> ft.View:
     """
     Retorna a ft.View para a rota de Login.
-    (REFATORADO) Adicionado SafeArea e melhorias de responsividade mobile.
+    (CORRIGIDO) A propriedade 'max_width' foi movida do Container para o Column
+    para resolver o TypeError.
     """
     
     vm = LoginViewModel(page)
     
+    # --- Controles do formulário (sem alterações) ---
     email_field = ft.TextField(
         label="Email",
         keyboard_type=ft.KeyboardType.EMAIL,
-        prefix_icon=ft.Icons.EMAIL_OUTLINED,
+        prefix_icon=ft.Icons.EMAIL_OUTLINED
     )
     
     password_field = ft.TextField(
@@ -39,11 +41,12 @@ def LoginView(page: ft.Page) -> ft.View:
     
     vm.set_controls(email_field, password_field)
 
+    # --- Card do formulário (CORRIGIDO) ---
     login_form_card = ft.Container(
         content=ft.Column(
             controls=[
-                ft.Text("App de Receitas", size=32, weight=ft.FontWeight.BOLD),
-                ft.Text("Faça login para continuar", size=18, color=ft.Colors.GREY_700),
+                ft.Text("App de Receitas", size=AppFonts.TITLE_LARGE, weight=ft.FontWeight.BOLD),
+                ft.Text("Faça login para continuar", size=AppFonts.BODY_MEDIUM, color=ft.Colors.GREY_700),
                 ft.Divider(height=20, color=ft.Colors.TRANSPARENT),
                 email_field,
                 password_field,
@@ -52,12 +55,12 @@ def LoginView(page: ft.Page) -> ft.View:
             ],
             spacing=15,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            width=350,
+            # (CORRIGIDO) A restrição de largura máxima é aplicada aqui, no Column.
+            max_width=AppDimensions.FIELD_MAX_WIDTH,
         ),
-        # (ALTERADO) Definimos max_width para responsividade mobile
-        max_width=400, 
-        padding=20,
-        border_radius=10,
+        # (CORRIGIDO) A propriedade 'max_width' foi REMOVIDA daqui.
+        padding=AppDimensions.PAGE_PADDING,
+        border_radius=AppDimensions.BORDER_RADIUS,
         shadow=ft.BoxShadow(
             spread_radius=1,
             blur_radius=15,
@@ -68,12 +71,12 @@ def LoginView(page: ft.Page) -> ft.View:
         bgcolor_dark=ft.Colors.with_opacity(0.03, ft.Colors.WHITE10),
     )
     
-    # (NOVO) Conteúdo principal da tela
+    # --- Layout principal (sem alterações) ---
     main_content = ft.Column(
         controls=[
             ft.Container(
                 content=ft.Row(
-                    [login_form_card], # Row para centralizar o card
+                    [login_form_card],
                     alignment=ft.MainAxisAlignment.CENTER
                 ),
                 alignment=ft.alignment.center,
@@ -88,13 +91,12 @@ def LoginView(page: ft.Page) -> ft.View:
     return ft.View(
         route="/login",
         controls=[
-            # (NOVO) Adicionado SafeArea conforme diretriz Mobile-First
             ft.SafeArea(
                 content=main_content,
                 expand=True
             )
         ],
         padding=0,
-        bgcolor=ft.Colors.GREY_50,
-        bgcolor_dark=ft.Colors.GREY_900
+        bgcolor=page.theme.color_scheme.surface,
+        bgcolor_dark=page.dark_theme.color_scheme.background
     )

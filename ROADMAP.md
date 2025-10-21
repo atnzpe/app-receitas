@@ -17,34 +17,38 @@ Este documento rastreia o progresso do desenvolvimento, onde estivemos, onde est
 
 ---
 
-## 🎯 Sprint 1: Autenticação e Roteamento (Próxima Etapa)
+## ✅ Sprint 1: Autenticação e Roteamento (Concluído)
+
+* **Status:** Concluído
+* **Entregas:**
+    * [X] Adição da tabela `users` ao banco de dados com hash de senha.
+    * [X] Criação do Model `User`.
+    * [X] Implementação do `auth_queries.py` para o CRUD de Usuário.
+    * [X] Refatoração de segurança para usar `bcrypt` no hashing de senhas.
+    * [X] Implementação do Roteador (`ft.Router`) no `main.py` para navegação.
+    * [X] Criação da `LoginView` e `RegisterView` com seus respectivos `ViewModels`.
+    * [X] Uso de `page.overlay` (via `SnackBar`) para feedback de login/registro.
+    * [X] Criação de testes unitários para a camada de autenticação com `bcrypt`.
+
+---
+
+## ✅ Sprint 2: UI do Dashboard e Temas (Concluído)
+
+* **Status:** Concluído
+* **Entregas:**
+    * [X] Implementação dos temas "claro" e "escuro" (baseado no `style.py` fornecido).
+    * [X] Criação do componente de UI reutilizável `DashboardCard`.
+    * [X] Implementação da `DashboardView` com `ft.AppBar` e `ft.GridView` responsivo.
+    * [X] Adição do botão de troca de tema interativo.
+    * [X] Implementação do `ft.AlertDialog` (overlay) para funcionalidades futuras.
+    * [X] Criação do componente global `AppFooter` e integração em todas as telas (Mobile-First).
+    * [X] Aplicação da regra `ft.SafeArea` para compatibilidade com APK.
+
+---
+
+## 🎯 Sprint 3: CRUD de Categorias (Próxima Etapa)
 
 * **Status:** Próxima Etapa
-* **Entregas:**
-    * [ ] Adição da tabela `users` ao banco de dados com hash de senha.
-    * [ ] Criação do Model `User`.
-    * [ ] Implementação do `auth_queries.py` para o CRUD de Usuário.
-    * [ ] Implementação do Roteador (`ft.Router`) no `main.py` para navegação.
-    * [ ] Criação da `LoginView` e `RegisterView` com seus respectivos `ViewModels`.
-    * [ ] Criação de testes unitários para a camada de autenticação.
-    * [ ] Criação (atualização) dos documentos `README.md` e `ROADMAP.md`.
-
----
-
-## 📋 Sprint 2: UI do Dashboard e Refatoração de Overlays (Pendente)
-
-* **Status:** Pendente
-* **Entregas:**
-    * [ ] Refatoração do feedback de Login/Registro para usar `ft.SnackBar` (overlays).
-    * [ ] Criação do componente de UI reutilizável `DashboardCard`.
-    * [ ] Implementação da `DashboardView` com `ft.AppBar` e `ft.GridView` responsivo.
-    * [ ] Implementação do `ft.AlertDialog` para feedback de funcionalidades futuras.
-
----
-
-## 📋 Sprint 3: CRUD de Categorias (Pendente)
-
-* **Status:** Pendente
 * **Entregas:**
     * [ ] Criar a `CategoryView` para listar, adicionar, editar e excluir categorias.
     * [ ] Desenvolver o `CategoryViewModel` para gerenciar o estado da UI e a lógica de negócio.
@@ -58,15 +62,7 @@ Este documento rastreia o progresso do desenvolvimento, onde estivemos, onde est
 * **Status:** Pendente
 * **Entregas:**
     * [ ] **Feature: CRUD de Receitas (Manual)**
-        * (View/ViewModel para o formulário completo de cadastro de receitas)
-        * (Queries para salvar/editar receitas e seus ingredientes associados)
-    * [ ] **Feature: Importação de Receitas**
-        * (Módulo de importação por Link - LLM)
-        * (Módulo de importação por Foto - OCR)
-        * (Módulo de importação por Voz - Speech-to-Text)
+    * [ ] **Feature: Importação de Receitas (Link, Foto, Voz)**
     * [ ] **Feature: Discovery (Sugestão de Receitas)**
     * [ ] **Feature: Lista de Compras**
-    * [ ] **Infraestrutura**
-        * (Integração com Firebase - Sincronização em Nuvem)
-        * (Build Multiplataforma - Android/Windows)
-        * (Integração Google Ads)
+    * [ ] **Infraestrutura (Firebase, Build Multiplataforma, Google Ads)**

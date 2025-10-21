@@ -4,11 +4,12 @@ import flet as ft
 def AppFooter() -> ft.Container:
     """
     Retorna um componente de rodapé reutilizável para todas as telas,
-    conforme requisito da Sprint 2.
+    conforme requisito da Sprint 2 ("Criado por...").
+    Garante consistência e atende à diretriz Mobile-First (SafeArea o protege).
     """
     
-    # IMPORTANTE: Substitua pela sua URL do LinkedIn
-    LINKEDIN_URL = "https://www.linkedin.com/in/gleysonatanazio/" 
+    # URL do LinkedIn do Arquiteto
+    LINKEDIN_URL = "https://www.linkedin.com/in/atnzpe/" 
     
     return ft.Container(
         content=ft.Row(
@@ -16,9 +17,10 @@ def AppFooter() -> ft.Container:
                 ft.Icon(ft.Icons.CODE_ROUNDED, size=16),
                 ft.Text("Criado por "),
                 ft.TextButton(
-                    text="Gleyson Atanazio",
+                    text="atnzpe", # Seu símbolo/nome
                     url=LINKEDIN_URL,
-                    on_click=lambda e: e.page.launch_url(LINKEDIN_URL),
+                    # Lança a URL no navegador
+                    on_click=lambda e: e.page.launch_url(LINKEDIN_URL), 
                     style=ft.ButtonStyle(
                         padding=0,
                         overlay_color=ft.Colors.TRANSPARENT

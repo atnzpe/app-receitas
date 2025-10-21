@@ -1,58 +1,62 @@
+# CÓDIGO COMPLETO E COMENTADO
 """
-Camada de acesso a dados exclusiva para autenticação e CRUD de usuários.
-(REFATORADO) Usa bcrypt para hashing de senha seguro.
+Camada de acesso a dados (Queries) exclusiva para autenticação e CRUD de usuários.
+Usa bcrypt para hashing de senha seguro.
 """
 import sqlite3
-import bcrypt # (ALTERADO) Importa bcrypt
+import bcrypt  # Usamos bcrypt para hashing seguro
+import logging
 from typing import Optional
 
 from .database import get_db_connection
 from src.models.user_model import User
 
-# (REMOVIDO) O SALT agora é gerenciado pelo bcrypt dentro do próprio hash.
-# SALT = b'your_very_secret_salt_here' 
+logger = logging.getLogger(__name__)
+
 
 def _hash_password(password: str) -> str:
     """
-    (REFATORADO) Gera um hash seguro para uma senha usando bcrypt.
-    O salt é gerado e incluído automaticamente no hash.
-    
-    :param password: A senha em texto plano.
-    :return: A string do hash da senha.
+    Gera um hash seguro para uma senha usando bcrypt.
+    O 'salt' é gerado automaticamente e armazenado dentro do hash.
     """
-    password_bytes = password.encode('utf-8')
-    salt = bcrypt.gensalt()
-    hashed_bytes = bcrypt.hashpw(password_bytes, salt)
-    return hashed_bytes.decode('utf-8')
+    try:
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed_bytes = bcrypt.hashpw(password_bytes, salt)
+        return hashed_bytes.decode('utf-8')
+    except Exception as e:
+        logger.error(f"Erro ao gerar hash bcrypt: {e}", exc_info=True)
+        raise
+
 
 def _verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    (REFATORADO) Verifica se uma senha em texto plano corresponde a um hash bcrypt.
-
-    :param plain_password: A senha fornecida pelo usuário.
-    :param hashed_password: O hash armazenado no banco de dados.
-    :return: True se a senha corresponder, False caso contrário.
+    Verifica se uma senha em texto plano corresponde a um hash bcrypt.
     """
     try:
         plain_password_bytes = plain_password.encode('utf-8')
         hashed_password_bytes = hashed_password.encode('utf-8')
+        # bcrypt.checkpw faz a comparação segura
         return bcrypt.checkpw(plain_password_bytes, hashed_password_bytes)
-    except (ValueError, TypeError):
-        # Ocorre se o hashed_password não for um hash bcrypt válido.
-        print("Erro ao verificar senha: hash malformado ou inválido.")
+    except (ValueError, TypeError) as e:
+        logger.warning(
+            f"Erro ao verificar senha (hash malformado ou inválido): {e}")
         return False
+
 
 def register_user(full_name: str, email: str, password: str) -> Optional[User]:
     """
     Cria um novo usuário no banco de dados.
-    (ALTERADO) Agora usa _hash_password com bcrypt.
+    Retorna o objeto User se for bem-sucedido, ou None se o email já existir.
     """
+    logger.debug(f"Tentativa de registro para o email: {email}")
+    password_hash = _hash_password(password)
+
     conn = get_db_connection()
     if not conn:
+        logger.error("Não foi possível conectar ao DB para registrar usuário.")
         return None
-        
-    password_hash = _hash_password(password)
-    
+
     try:
         cursor = conn.cursor()
         cursor.execute(
@@ -61,52 +65,64 @@ def register_user(full_name: str, email: str, password: str) -> Optional[User]:
         )
         conn.commit()
         user_id = cursor.lastrowid
+
         if user_id:
+            logger.info(
+                f"Usuário '{full_name}' (ID: {user_id}) registrado com sucesso.")
             return User(id=user_id, full_name=full_name, email=email)
         return None
-        
+
     except sqlite3.IntegrityError:
-        print(f"Erro: Email '{email}' já cadastrado.")
+        # Este erro ocorre se o email (UNIQUE) já existir
+        logger.warning(f"Falha no registro: Email '{email}' já cadastrado.")
         return None
     except sqlite3.Error as e:
-        print(f"Erro ao registrar usuário: {e}")
+        logger.error(f"Erro SQLite ao registrar usuário: {e}", exc_info=True)
         return None
     finally:
         conn.close()
 
+
 def get_user_by_email_and_password(email: str, password: str) -> Optional[User]:
     """
     Autentica um usuário.
-    (ALTERADO) Agora usa _verify_password com bcrypt.
+    Retorna o objeto User se o email e a senha estiverem corretos, ou None caso contrário.
     """
+    logger.debug(f"Tentativa de autenticação para o email: {email}")
     conn = get_db_connection()
     if not conn:
+        logger.error(
+            "Não foi possível conectar ao DB para autenticar usuário.")
         return None
-        
+
     try:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-        user_row = cursor.fetchone()
-        
+        user_row = cursor.fetchone()  # Busca o usuário pelo email
+
         if not user_row:
-            print("Usuário não encontrado.")
+            logger.warning(
+                f"Falha no login: Usuário '{email}' não encontrado.")
             return None
-            
+
         stored_hash = user_row['hashed_password']
-        
+
+        # Verifica a senha usando bcrypt
         if _verify_password(password, stored_hash):
-            # Sucesso! Retorna o objeto User
+            logger.info(f"Usuário '{email}' autenticado com sucesso.")
+            # Sucesso! Retorna o objeto User (sem a senha)
             return User(
                 id=user_row['id'],
                 full_name=user_row['full_name'],
                 email=user_row['email']
             )
         else:
-            print("Senha incorreta.")
+            logger.warning(
+                f"Falha no login: Senha incorreta para o usuário '{email}'.")
             return None
-            
+
     except sqlite3.Error as e:
-        print(f"Erro ao logar: {e}")
+        logger.error(f"Erro SQLite ao logar: {e}", exc_info=True)
         return None
     finally:
         conn.close()

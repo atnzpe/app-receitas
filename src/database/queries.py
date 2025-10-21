@@ -1,22 +1,35 @@
 # CÓDIGO COMPLETO E COMENTADO
 """
-Este arquivo centralizará todas as interações SQL com o banco de dados.
-Seguindo a arquitetura, o ViewModel chamará funções deste arquivo
-para buscar ou modificar dados, que por sua vez preencherão os Models.
+Este arquivo centralizará todas as interações SQL com o banco de dados
+que NÃO sejam de autenticação (Receitas, Categorias, Ingredientes).
 
-Nenhuma lógica de UI (Flet) deve existir aqui.
-Nenhuma lógica de ViewModel (estado da UI) deve existir aqui.
-Apenas SQL e manipulação de conexão.
+Seguindo a arquitetura, o ViewModel (ex: CategoryViewModel) chamará funções
+deste arquivo para buscar ou modificar dados.
 """
 
 from .database import get_db_connection
 import sqlite3
+import logging
 
-# Este arquivo está vazio por enquanto, mas está pronto para receber
-# as funções CRUD (ex: add_category, get_all_recipes, etc.)
-# que implementaremos na próxima Sprint.
+logger = logging.getLogger(__name__)
 
-def placeholder_query():
-    """Função de exemplo."""
-    print("Camada de Queries está pronta.")
-    pass
+# Este arquivo está pronto para receber as funções da Sprint 3.
+# Exemplo de como uma função será (não executar ainda):
+#
+# from src.models.recipe_model import Category
+#
+# def get_all_categories() -> list[Category]:
+#     logger.debug("Buscando todas as categorias do banco de dados...")
+#     conn = get_db_connection()
+#     if not conn:
+#         return []
+#     try:
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT id, name FROM categories ORDER BY name")
+#         rows = cursor.fetchall()
+#         return [Category(id=row['id'], name=row['name']) for row in rows]
+#     except sqlite3.Error as e:
+#         logger.error(f"Erro ao buscar categorias: {e}", exc_info=True)
+#         return []
+#     finally:
+#         conn.close()

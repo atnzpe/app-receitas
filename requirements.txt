@@ -1,2 +1,4 @@
 flet
 bcrypt
+numpy
+pandas

@@ -3,18 +3,25 @@
 ViewModel para a LoginView.
 Contém o estado (email, senha) e a lógica de autenticação.
 """
-import flet as ft
-from src.database import auth_queries
+import logging
 from typing import Optional
+import flet as ft # Importado apenas para tipagem e page actions
+
+from src.database import auth_queries # Camada de dados
+
+logger = logging.getLogger(__name__)
 
 class LoginViewModel:
     
     def __init__(self, page: ft.Page):
         """
-        O ViewModel precisa da 'page' para poder realizar a navegação (roteamento)
-        e para acessar o 'overlay'.
+        O ViewModel precisa da 'page' para:
+        1. Navegação (page.go)
+        2. Overlays (page.snack_bar)
+        3. Sessão (page.session)
         """
         self.page = page
+        logger.debug("LoginViewModel inicializado.")
         
         # Referências aos controles da View (para ler valores)
         self.email_field: Optional[ft.TextField] = None
@@ -26,13 +33,11 @@ class LoginViewModel:
         self.password_field = password_field
 
     def _show_overlay_feedback(self, message: str, is_error: bool = True):
-        """
-        Usa o page.overlay (via SnackBar) para feedback,
-        conforme diretriz da Sprint 1.
-        """
+        """Usa o page.overlay (via SnackBar) para feedback."""
+        logger.debug(f"Exibindo SnackBar (Overlay). Erro={is_error}. Msg='{message}'")
         self.page.snack_bar = ft.SnackBar(
             content=ft.Text(message),
-            bgcolor=ft.Colors.RED_600 if is_error else ft.Colors.GREEN_600,
+            bgcolor=self.page.theme.color_scheme.error if is_error else ft.Colors.GREEN_600,
             duration=3000
         )
         self.page.snack_bar.open = True
@@ -40,44 +45,44 @@ class LoginViewModel:
 
     def on_login_click(self, e):
         """Lógica executada quando o botão 'Entrar' é clicado."""
-        if not self._validate_inputs():
-            # A validação _validate_inputs() já atualiza a UI com error_text inline
-            return
+        logger.debug("Evento on_login_click disparado.")
+        try:
+            if not self._validate_inputs():
+                logger.warning("Validação de login falhou.")
+                return
 
-        email = self.email_field.value.strip()
-        password = self.password_field.value
-        
-        # Chama a camada de Queries
-        user = auth_queries.get_user_by_email_and_password(email, password)
-        
-        if user:
-            print(f"Login bem-sucedido: {user.full_name}")
-            # Limpa sessão (caso seja um re-login)
-            self.page.session.clear()
-            # Armazena o usuário na sessão da página (compartilhamento de estado)
-            self.page.session.set("logged_in_user", user)
+            email = self.email_field.value.strip()
+            password = self.password_field.value
             
-            # Navega para o Dashboard (rota principal '/')
-            self.page.go("/")
-        else:
-            # Usa o OVERLAY (SnackBar) para feedback de erro
-            self._show_overlay_feedback("Email ou senha inválidos.")
+            # Chama a camada de Queries
+            logger.debug(f"Chamando auth_queries para autenticar: {email}")
+            user = auth_queries.get_user_by_email_and_password(email, password)
+            
+            if user:
+                logger.info(f"Login bem-sucedido para usuário ID: {user.id}")
+                self.page.session.clear()
+                self.page.session.set("logged_in_user", user)
+                self.page.go("/") # Navega para o Dashboard
+            else:
+                # Log de falha já é feito em auth_queries
+                self._show_overlay_feedback("Email ou senha inválidos.")
         
+        except Exception as ex:
+            logger.error(f"Erro inesperado em on_login_click: {ex}", exc_info=True)
+            self._show_overlay_feedback("Ocorreu um erro inesperado.")
+
     def on_navigate_to_register(self, e):
         """Navega para a tela de registro."""
+        logger.debug("Evento on_navigate_to_register disparado. Navegando para /register.")
         self.page.go("/register")
 
     def _validate_inputs(self) -> bool:
-        """
-        Validação simples dos campos.
-        O error_text inline (do TextField) é a melhor prática para
-        feedback de validação, não de ação.
-        """
-        email_valid = self.email_field.value is not None and "@" in self.email_field.value
-        pass_valid = self.password_field.value is not None and len(self.password_field.value) > 0
+        """Validação inline dos campos (não usa overlay)."""
+        email_valid = self.email_field.value and "@" in self.email_field.value
+        pass_valid = bool(self.password_field.value) # (bool(None) is False, bool("") is False)
         
         self.email_field.error_text = None if email_valid else "Email inválido."
         self.password_field.error_text = None if pass_valid else "Senha não pode estar vazia."
         
-        self.page.update() # Atualiza os error_text
+        self.page.update()
         return email_valid and pass_valid
