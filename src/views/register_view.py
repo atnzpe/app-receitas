@@ -1,11 +1,12 @@
 # CÓDIGO ALTERADO E COMENTADO
 import flet as ft
 from src.viewmodels.register_viewmodel import RegisterViewModel
-from src.views.components.app_footer import AppFooter # (NOVO)
+from src.views.components.app_footer import AppFooter
 
 def RegisterView(page: ft.Page) -> ft.View:
     """
     Retorna a ft.View para a rota de Registro.
+    (REFATORADO) Adicionado SafeArea e melhorias de responsividade mobile.
     """
     
     vm = RegisterViewModel(page)
@@ -43,7 +44,6 @@ def RegisterView(page: ft.Page) -> ft.View:
     
     vm.set_controls(name_field, email_field, password_field)
     
-    # (NOVO) Card centralizado do formulário
     register_form_card = ft.Container(
         content=ft.Column(
             controls=[
@@ -57,9 +57,10 @@ def RegisterView(page: ft.Page) -> ft.View:
             ],
             spacing=15,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            width=350, # Largura fixa para o card
+            width=350,
         ),
-        width=400,
+        # (ALTERADO) Definimos max_width para responsividade mobile
+        max_width=400,
         padding=20,
         border_radius=10,
         shadow=ft.BoxShadow(
@@ -72,27 +73,33 @@ def RegisterView(page: ft.Page) -> ft.View:
         bgcolor_dark=ft.Colors.with_opacity(0.03, ft.Colors.WHITE10),
     )
 
+    # (NOVO) Conteúdo principal da tela
+    main_content = ft.Column(
+        controls=[
+            ft.Container(
+                content=ft.Row(
+                    [register_form_card], # Row para centralizar o card
+                    alignment=ft.MainAxisAlignment.CENTER
+                ),
+                alignment=ft.alignment.center,
+                expand=True
+            ),
+            AppFooter()
+        ],
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        expand=True
+    )
+
     return ft.View(
         route="/register",
         controls=[
-            # (ALTERADO) Layout em Coluna para empurrar o rodapé para baixo
-            ft.Column(
-                controls=[
-                    # Container centralizado (ocupa espaço expandido)
-                    ft.Container(
-                        content=register_form_card,
-                        alignment=ft.alignment.center,
-                        expand=True
-                    ),
-                    # Rodapé
-                    AppFooter()
-                ],
-                # Distribui o espaço: formulário no centro (expandido), rodapé embaixo
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            # (NOVO) Adicionado SafeArea conforme diretriz Mobile-First
+            ft.SafeArea(
+                content=main_content,
                 expand=True
             )
         ],
-        padding=0, # Remove padding da View
+        padding=0,
         bgcolor=ft.Colors.GREY_50,
         bgcolor_dark=ft.Colors.GREY_900
     )

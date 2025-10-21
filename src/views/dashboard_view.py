@@ -1,15 +1,10 @@
-# CÓDIGO COMPLETO E COMENTADO
-"""
-A View do Dashboard (Tela Principal pós-login).
-Implementa a UI baseada nas imagens,
-requisitos de tema e rodapé.
-"""
+# CÓDIGO ALTERADO E COMENTADO
 import flet as ft
 from src.viewmodels.dashboard_viewmodel import DashboardViewModel
 from src.views.components.dashboard_card import DashboardCard
-from src.views.components.app_footer import AppFooter # (NOVO)
+from src.views.components.app_footer import AppFooter
 
-# Definição das cores dos cards (baseado nas imagens)
+# (Definição de CARD_Colors permanece a mesma)
 CARD_Colors = {
     "Receitas": {
         "bg_light": ft.Colors.RED_100, "fg_light": ft.Colors.RED_600,
@@ -33,24 +28,21 @@ CARD_Colors = {
     },
 }
 
+
 def DashboardView(page: ft.Page) -> ft.View:
     """
     Retorna a ft.View para a rota de Dashboard ('/').
+    (REFATORADO) Adicionado SafeArea.
     """
     
-    # 1. Instanciar o ViewModel
     vm = DashboardViewModel(page)
     
-    # --- 2. Definição dos Controles ---
-
-    # Botão de Tema (referência é passada ao VM)
     vm.theme_icon_button = ft.IconButton(
         icon=vm.get_theme_icon(),
         tooltip="Mudar tema",
         on_click=vm.toggle_theme
     )
 
-    # AppBar (Cabeçalho)
     app_bar = ft.AppBar(
         leading=ft.Icon(ft.Icons.RESTAURANT_MENU, color=ft.Colors.DEEP_ORANGE_500),
         title=ft.Text("App de Receitas", weight=ft.FontWeight.BOLD),
@@ -61,12 +53,11 @@ def DashboardView(page: ft.Page) -> ft.View:
             ft.IconButton(
                 icon=ft.Icons.LOGOUT_OUTLINED,
                 tooltip="Sair (Logout)",
-                on_click=vm.on_logout # 3. Bindar evento ao VM
+                on_click=vm.on_logout
             )
         ]
     )
 
-    # Grid de Cards
     dashboard_grid = ft.GridView(
         controls=[
             DashboardCard(
@@ -74,66 +65,69 @@ def DashboardView(page: ft.Page) -> ft.View:
                 title="Minhas Receitas",
                 subtitle="Organize e visualize suas receitas.",
                 color_scheme=CARD_Colors["Receitas"],
-                on_card_click=vm.show_feature_in_development_dialog # 3. Bindar
+                on_card_click=vm.show_feature_in_development_dialog
             ),
             DashboardCard(
                 icon_name=ft.Icons.EDIT_NOTE_OUTLINED,
                 title="Cadastros",
                 subtitle="Gerencie ingredientes e categorias.",
                 color_scheme=CARD_Colors["Cadastros"],
-                on_card_click=vm.navigate_to_cadastros # 3. Bindar
+                on_card_click=vm.navigate_to_cadastros
             ),
             DashboardCard(
                 icon_name=ft.Icons.SEARCH_OUTLINED,
                 title="Discovery",
                 subtitle="Encontre receitas com o que tem em casa.",
                 color_scheme=CARD_Colors["Discovery"],
-                on_card_click=vm.show_feature_in_development_dialog # 3. Bindar
+                on_card_click=vm.show_feature_in_development_dialog
             ),
             DashboardCard(
                 icon_name=ft.Icons.SHOPPING_CART_OUTLINED,
                 title="Mercado",
                 subtitle="Acesse apps parceiros para compras.",
                 color_scheme=CARD_Colors["Mercado"],
-                on_card_click=vm.show_feature_in_development_dialog # 3. Bindar
+                on_card_click=vm.show_feature_in_development_dialog
             ),
             DashboardCard(
                 icon_name=ft.Icons.LIST_ALT_OUTLINED,
                 title="Lista de Compras",
                 subtitle="Crie e compartilhe sua lista.",
                 color_scheme=CARD_Colors["Lista"],
-                on_card_click=vm.show_feature_in_development_dialog # 3. Bindar
+                on_card_click=vm.show_feature_in_development_dialog
             ),
         ],
         expand=True,
-        max_extent=350, # Cada card tenta ter 350px (quebra linha se não couber)
-        child_aspect_ratio=1.8, # Proporção (Largura/Altura)
+        max_extent=350,
+        child_aspect_ratio=1.8,
         spacing=15,
         run_spacing=15
     )
-
-    # --- 4. Montagem da View ---
     
+    # (NOVO) Conteúdo principal da tela
+    main_content = ft.Column(
+        controls=[
+            ft.Container(
+                content=dashboard_grid,
+                padding=20,
+                expand=True
+            ),
+            AppFooter()
+        ],
+        expand=True,
+        spacing=0
+    )
+
     return ft.View(
         route="/",
         appbar=app_bar,
         controls=[
-            # (NOVO) Layout em Coluna para incluir o rodapé
-            ft.Column(
-                controls=[
-                    ft.Container(
-                        content=dashboard_grid,
-                        padding=20,
-                        expand=True # Grid ocupa o espaço principal
-                    ),
-                    AppFooter() # Rodapé na parte inferior
-                ],
-                expand=True,
-                spacing=0
+            # (NOVO) Adicionado SafeArea conforme diretriz Mobile-First
+            # Note que o appbar fica FORA do SafeArea.
+            ft.SafeArea(
+                content=main_content,
+                expand=True
             )
         ],
-        vertical_alignment=ft.MainAxisAlignment.START,
-        horizontal_alignment=ft.CrossAxisAlignment.START,
         padding=0,
         bgcolor=ft.Colors.GREY_50,
         bgcolor_dark=ft.Colors.GREY_900
