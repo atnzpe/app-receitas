@@ -3,7 +3,7 @@ import flet as ft
 from src.viewmodels.dashboard_viewmodel import DashboardViewModel
 from src.views.components.dashboard_card import DashboardCard
 from src.views.components.app_footer import AppFooter
-from src.utils.theme import CARD_COLORS # Importa as cores
+from src.utils.theme import CARD_COLORS,AppDimensions,AppThemes,AppFonts # Importa as cores
 
 def DashboardView(page: ft.Page) -> ft.View:
     """
@@ -102,15 +102,16 @@ def DashboardView(page: ft.Page) -> ft.View:
     # 5. Retornar a ft.View
     return ft.View(
         route="/",
-        appbar=app_bar, # AppBar é uma propriedade da View
+        appbar=app_bar,
         controls=[
-            # Diretriz Mobile-First: SafeArea
             ft.SafeArea(
                 content=main_content,
                 expand=True
             )
         ],
         padding=0,
-        bgcolor=page.theme.color_scheme.surface,
-        bgcolor_dark=page.dark_theme.color_scheme.background
+        # (CORRIGIDO) Apenas bgcolor é necessário. O Flet usa page.dark_theme
+        # para aplicar a cor correta do background no modo escuro.
+        bgcolor=page.theme.color_scheme.background,
+        # (REMOVIDO) bgcolor_dark=page.dark_theme.color_scheme.background
     )

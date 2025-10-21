@@ -4,9 +4,13 @@ Este é um aplicativo multiplataforma (Desktop e Android) para organização e d
 
 O projeto segue uma arquitetura **MVVM (Model-View-ViewModel)** rigorosa e um design **Offline-First**, garantindo que o aplicativo funcione perfeitamente sem conexão com a internet, utilizando um banco de dados local SQLite.
 
+**Visão Geral:** O objetivo é criar um organizador de receitas centralizado, permitindo importação de múltiplas fontes e descoberta baseada em ingredientes. As funcionalidades planejadas incluem gerenciamento completo (CRUD) de Receitas, Ingredientes, Categorias, Fornecedores (para listas de compras), Links de Mercados parceiros, e edição de perfil de usuário.
+
+![Screenshot do Dashboard do App de Receitas no tema claro](https://i.imgur.com/your-dashboard-image.png)
+
 ## 🗺️ Roadmap do Projeto
 
-Nosso plano de desenvolvimento e o status atual das Sprints estão detalhados em nosso [**ROADMAP.md**](ROADMAP.md).
+Nosso plano de desenvolvimento detalhado e o status atual das Sprints estão em nosso [**ROADMAP.md**](ROADMAP.md).
 
 ## 🛠️ Stack de Tecnologia
 
@@ -18,13 +22,14 @@ Nosso plano de desenvolvimento e o status atual das Sprints estão detalhados em
 
 ## 🏛️ Arquitetura do Projeto
 
-O código é estritamente separado nas seguintes camadas para garantir desacoplamento e testabilidade:
+O código é estritamente separado nas seguintes camadas:
 
-* `/src/models`: Contém os Data Models (dataclasses) que representam nossos dados (ex: `recipe_model.py`, `user_model.py`).
-* `/src/database`: Contém a lógica de acesso ao banco de dados (`database.py` para conexão, `auth_queries.py` para autenticação).
-* `/src/viewmodels`: Contém a lógica de estado e apresentação. O ViewModel *não conhece* a View (ex: `login_viewmodel.py`).
-* `/src/views`: Contém a definição da UI (os controles Flet) e componentes reutilizáveis. A View *conhece* o ViewModel.
-* `/main.py`: Ponto de entrada da aplicação, responsável pela configuração inicial e pelo roteamento de telas.
+* `/src/models`: Data Models (dataclasses) para `User`, `Recipe`, etc.
+* `/src/database`: Lógica de acesso ao banco de dados (conexão e queries).
+* `/src/viewmodels`: Lógica de estado e apresentação (sem dependência direta de Flet).
+* `/src/views`: Definição da UI (controles Flet) e componentes reutilizáveis.
+* `/src/utils`: Código auxiliar (logging, temas, constantes de design).
+* `/main.py`: Ponto de entrada, configuração e roteamento.
 
 ## 🏃 Como Executar o Projeto
 

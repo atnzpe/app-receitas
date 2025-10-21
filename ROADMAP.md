@@ -7,62 +7,66 @@ Este documento rastreia o progresso do desenvolvimento, onde estivemos, onde est
 ## ✅ Sprint 0: Fundação e Estrutura (Concluído)
 
 * **Status:** Concluído
-* **Entregas:**
-    * [X] Definição da arquitetura MVVM.
-    * [X] Criação da estrutura de diretórios (`src/models`, `src/views`, etc.).
-    * [X] Configuração do banco de dados SQLite (`database.py`).
-    * [X] Criação das tabelas iniciais (`categories`, `recipes`, `ingredients`).
-    * [X] Definição dos Models iniciais (`Recipe`, `Ingredient`, `Category`).
-    * [X] Implementação de testes unitários para a criação do banco de dados.
+* **Entregas:** Arquitetura MVVM, Estrutura de diretórios, Configuração DB SQLite, Tabelas e Models iniciais, Testes DB.
 
 ---
 
 ## ✅ Sprint 1: Autenticação e Roteamento (Concluído)
 
 * **Status:** Concluído
-* **Entregas:**
-    * [X] Adição da tabela `users` ao banco de dados com hash de senha.
-    * [X] Criação do Model `User`.
-    * [X] Implementação do `auth_queries.py` para o CRUD de Usuário.
-    * [X] Refatoração de segurança para usar `bcrypt` no hashing de senhas.
-    * [X] Implementação do Roteador (`ft.Router`) no `main.py` para navegação.
-    * [X] Criação da `LoginView` e `RegisterView` com seus respectivos `ViewModels`.
-    * [X] Uso de `page.overlay` (via `SnackBar`) para feedback de login/registro.
-    * [X] Criação de testes unitários para a camada de autenticação com `bcrypt`.
+* **Entregas:** Tabela `users`, Model `User`, `auth_queries.py` (com `bcrypt`), Roteador (`ft.Router`), Views/ViewModels de Login/Registro, Feedback com Overlays (`SnackBar`), Testes de Autenticação.
 
 ---
 
 ## ✅ Sprint 2: UI do Dashboard e Temas (Concluído)
 
 * **Status:** Concluído
-* **Entregas:**
-    * [X] Implementação dos temas "claro" e "escuro" (baseado no `style.py` fornecido).
-    * [X] Criação do componente de UI reutilizável `DashboardCard`.
-    * [X] Implementação da `DashboardView` com `ft.AppBar` e `ft.GridView` responsivo.
-    * [X] Adição do botão de troca de tema interativo.
-    * [X] Implementação do `ft.AlertDialog` (overlay) para funcionalidades futuras.
-    * [X] Criação do componente global `AppFooter` e integração em todas as telas (Mobile-First).
-    * [X] Aplicação da regra `ft.SafeArea` para compatibilidade com APK.
+* **Entregas:** Centralização de Estilos (`theme.py`), Temas claro/escuro, Componente `DashboardCard`, `DashboardView` (AppBar, GridView), Botão de troca de tema, `AlertDialog` para features futuras, Componente `AppFooter`, `SafeArea` (Mobile-First).
 
 ---
 
-## 🎯 Sprint 3: CRUD de Categorias (Próxima Etapa)
+## 🎯 Sprint 3: CRUD de Cadastros Básicos (Próxima Etapa)
 
 * **Status:** Próxima Etapa
 * **Entregas:**
-    * [ ] Criar a `CategoryView` para listar, adicionar, editar e excluir categorias.
-    * [ ] Desenvolver o `CategoryViewModel` para gerenciar o estado da UI e a lógica de negócio.
-    * [ ] Implementar as funções de acesso a dados em `src/database/queries.py` (CRUD de Categorias).
-    * [ ] Conectar a navegação do Card "Cadastros" (no Dashboard) para a nova rota `/categories`.
+    * **CRUD Categorias:**
+        * [ ] Criar a `CategoryView` (Listar, Adicionar, Editar, Excluir).
+        * [ ] Desenvolver o `CategoryViewModel`.
+        * [ ] Implementar `category_queries.py` (ou adicionar em `queries.py`).
+        * [ ] Conectar navegação do Card "Cadastros" para a rota `/categories`.
+    * **CRUD Fornecedores:**
+        * [ ] Adicionar tabela `suppliers` ao `database.py` (nome, endereço, telefone/WhatsApp, email).
+        * [ ] Criar o Model `Supplier`.
+        * [ ] Criar a `SupplierView` (Listar, Adicionar, Editar, Excluir).
+        * [ ] Desenvolver o `SupplierViewModel`.
+        * [ ] Implementar `supplier_queries.py` (ou adicionar em `queries.py`).
+        * [ ] Adicionar acesso ao CRUD de Fornecedores (provavelmente dentro da área "Cadastros").
 
 ---
 
-## 📓 Backlog (Sprints Futuras)
+## 📓 Backlog (Sprints Futuras - Prioridade a definir)
 
 * **Status:** Pendente
 * **Entregas:**
     * [ ] **Feature: CRUD de Receitas (Manual)**
+        * Adicionar/Editar/Excluir Receitas (título, instruções, tempo, fonte, etc.).
+        * View/ViewModel para formulário de cadastro/edição de receitas.
+        * Queries para salvar/editar receitas.
+    * [ ] **Feature: CRUD de Ingredientes (vinculado a Receitas)**
+        * Adicionar/Editar/Excluir Ingredientes *dentro* de uma receita (nome, quantidade).
+        * Atualizar View/ViewModel de Receitas para incluir gerenciamento de ingredientes.
+        * Queries para salvar/editar/excluir ingredientes associados a uma receita.
+    * [ ] **Feature: CRUD Usuário (Edição de Perfil)**
+        * Permitir ao usuário logado alterar seu nome e senha (verificando senha atual).
+        * View/ViewModel para edição de perfil.
+        * Queries para atualização de dados do usuário.
+    * [ ] **Feature: CRUD Mercado (Links Parceiros)**
+        * Adicionar tabela `markets` (nome, url_link).
+        * Criar Model `Market`.
+        * View/ViewModel para gerenciar links de mercados (Adicionar/Editar/Excluir).
+        * Queries para CRUD de mercados.
+        * (Definir como o Card "Mercado" usará esses links).
     * [ ] **Feature: Importação de Receitas (Link, Foto, Voz)**
     * [ ] **Feature: Discovery (Sugestão de Receitas)**
-    * [ ] **Feature: Lista de Compras**
+    * [ ] **Feature: Lista de Compras** (Usará Fornecedores cadastrados)
     * [ ] **Infraestrutura (Firebase, Build Multiplataforma, Google Ads)**

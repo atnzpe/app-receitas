@@ -6,7 +6,8 @@ from src.utils.theme import AppDimensions, AppFonts
 def RegisterView(page: ft.Page) -> ft.View:
     """
     Retorna a ft.View para a rota de Registro.
-    (CORRIGIDO) A propriedade 'max_width' foi movida do Container para o Column.
+    (CORRIGIDO) Corrigido o problema de renderização (tela em branco)
+    ao usar as cores de referência do Flet.
     """
     
     vm = RegisterViewModel(page)
@@ -59,10 +60,8 @@ def RegisterView(page: ft.Page) -> ft.View:
             ],
             spacing=15,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            # (CORRIGIDO) A restrição de largura máxima é aplicada aqui, no Column.
-            max_width=AppDimensions.FIELD_MAX_WIDTH,
         ),
-        # (CORRIGIDO) A propriedade 'max_width' foi REMOVIDA daqui.
+        width=AppDimensions.FIELD_MAX_WIDTH,
         padding=AppDimensions.PAGE_PADDING,
         border_radius=AppDimensions.BORDER_RADIUS,
         shadow=ft.BoxShadow(
@@ -71,8 +70,8 @@ def RegisterView(page: ft.Page) -> ft.View:
             color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
             offset=ft.Offset(0, 5),
         ),
-        bgcolor=ft.Colors.WHITE,
-        bgcolor_dark=ft.Colors.with_opacity(0.03, ft.Colors.WHITE10),
+        # (CORRIGIDO) Usando a cor de referência do Flet.
+        bgcolor=ft.Colors.SURFACE,
     )
     
     # --- Layout principal (sem alterações) ---
@@ -84,12 +83,14 @@ def RegisterView(page: ft.Page) -> ft.View:
                     alignment=ft.MainAxisAlignment.CENTER
                 ),
                 alignment=ft.alignment.center,
-                expand=True
+                expand=True,
+                padding=ft.padding.symmetric(horizontal=AppDimensions.PAGE_PADDING)
             ),
             AppFooter()
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        expand=True
+        expand=True,
+        scroll=ft.ScrollMode.ADAPTIVE,
     )
 
     return ft.View(
@@ -101,6 +102,6 @@ def RegisterView(page: ft.Page) -> ft.View:
             )
         ],
         padding=0,
-        bgcolor=page.theme.color_scheme.surface,
-        bgcolor_dark=page.dark_theme.color_scheme.background
+        # (CORRIGIDO) Usando a cor de referência do Flet.
+        bgcolor=page.theme.color_scheme.background,
     )

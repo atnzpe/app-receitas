@@ -1,25 +1,28 @@
-# CÓDIGO COMPLETO E COMENTADO
 import flet as ft
+# (ALTERADO) Importa constantes de theme.py
+from src.utils.theme import AppDimensions
 
 def AppFooter() -> ft.Container:
     """
-    Retorna um componente de rodapé reutilizável para todas as telas,
-    conforme requisito da Sprint 2 ("Criado por...").
-    Garante consistência e atende à diretriz Mobile-First (SafeArea o protege).
+    Retorna um componente de rodapé reutilizável.
+    (REFATORADO) Usa constantes de AppDimensions e cores do tema.
     """
     
-    # URL do LinkedIn do Arquiteto
-    LINKEDIN_URL = "https://www.linkedin.com/in/atnzpe/" 
+    LINKEDIN_URL = "https://www.linkedin.com/in/gleysonatanazio/" 
     
     return ft.Container(
         content=ft.Row(
             controls=[
-                ft.Icon(ft.Icons.CODE_ROUNDED, size=16),
+                ft.Icon(
+                    ft.Icons.CODE_ROUNDED, 
+                    size=AppDimensions.FOOTER_ICON_SIZE, # Usa constante
+                    # (ALTERADO) Usa cor sutil do tema
+                    color=ft.Colors.ON_SURFACE_VARIANT 
+                ),
                 ft.Text("Criado por "),
                 ft.TextButton(
-                    text="atnzpe", # Seu símbolo/nome
+                    text="Gleyson Atanazio",
                     url=LINKEDIN_URL,
-                    # Lança a URL no navegador
                     on_click=lambda e: e.page.launch_url(LINKEDIN_URL), 
                     style=ft.ButtonStyle(
                         padding=0,
@@ -28,10 +31,10 @@ def AppFooter() -> ft.Container:
                 )
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            spacing=4
+            spacing=AppDimensions.SMALL_SPACING # Usa constante
         ),
-        height=40,
+        height=AppDimensions.FOOTER_HEIGHT, # Usa constante
         alignment=ft.alignment.center,
-        # Define uma cor de fundo sutil que se adapta ao tema
-        bgcolor=ft.Colors.with_opacity(0.03, ft.Colors.ON_SURFACE)
+        # (ALTERADO) Usa cor de superfície variante sutil do tema
+        bgcolor=ft.Colors.SURFACE
     )
