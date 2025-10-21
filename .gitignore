@@ -11,6 +11,10 @@ env/
 # Isso impede que o recipes.db seja versionado (Offline-First)
 /data/
 
+# --- Logs (NOVO) ---
+# Ignora a pasta de logs gerada pelo logging_setup
+/logs/
+
 # --- Cache e Arquivos compilados do Python ---
 __pycache__/
 *.py[cod]
