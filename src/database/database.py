@@ -1,11 +1,10 @@
-# CÓDIGO COMPLETO E COMENTADO
 import sqlite3
 import os
-import logging  # Para debug
+from src.core.logger import get_logger
+from src.core.exceptions import DatabaseError
 
-logger = logging.getLogger(__name__)
+logger = get_logger("src.database")
 
-# Define o caminho do banco de dados (offline-first)
 DB_DIR = "data"
 DB_NAME = "recipes.db"
 DB_PATH = os.path.join(DB_DIR, DB_NAME)
@@ -13,92 +12,83 @@ DB_PATH = os.path.join(DB_DIR, DB_NAME)
 
 def init_database():
     """
-    Inicializa o banco de dados SQLite e cria as tabelas iniciais
-    se elas ainda não existirem.
+    Inicializa o banco de dados. 
+    Lança DatabaseError se falhar, impedindo o app de iniciar quebrado.
     """
+    logger.info("Iniciando verificação de integridade do Banco de Dados...")
+
     try:
-        # Garante que o diretório 'data' (ignorado pelo .gitignore) exista
         os.makedirs(DB_DIR, exist_ok=True)
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-
-        logger.info(f"Banco de dados conectado em: {DB_PATH}")
-
-        # Habilitar chaves estrangeiras é crucial para a integridade dos dados
         cursor.execute("PRAGMA foreign_keys = ON;")
 
-        # Tabela de Usuários
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            full_name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            hashed_password TEXT NOT NULL
-        );
-        """)
+        # Scripts SQL
+        queries = [
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                full_name TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                hashed_password TEXT NOT NULL
+            );
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE
+            );
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS recipes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                instructions TEXT,
+                prep_time_minutes INTEGER,
+                source_url TEXT,
+                image_path TEXT,
+                category_id INTEGER,
+                user_id INTEGER,
+                FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS ingredients (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                quantity TEXT,
+                recipe_id INTEGER NOT NULL,
+                FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE
+            );
+            """
+        ]
 
-        # Tabela de Categorias
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS categories (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE
-        );
-        """)
-
-        # Tabela de Receitas
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS recipes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            instructions TEXT,
-            prep_time_minutes INTEGER,
-            source_url TEXT,
-            image_path TEXT,
-            category_id INTEGER,
-            user_id INTEGER, -- Vincula receita ao usuário
-            FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL,
-            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-        );
-        """)
-
-        # Tabela de Ingredientes
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS ingredients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            quantity TEXT,
-            recipe_id INTEGER NOT NULL,
-            FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE
-        );
-        """)
+        for q in queries:
+            cursor.execute(q)
 
         conn.commit()
-        logger.info(
-            "Tabelas 'users', 'categories', 'recipes', e 'ingredients' verificadas/criadas.")
+        logger.info("Banco de dados verificado e tabelas criadas com sucesso.")
 
     except sqlite3.Error as e:
-        logger.error(
-            f"Erro ao inicializar o banco de dados: {e}", exc_info=True)
+        logger.critical(f"Erro Crítico no Banco de Dados: {e}", exc_info=True)
+        raise DatabaseError(
+            "Falha na inicialização do esquema do banco de dados.", e)
     finally:
-        if conn:
+        if 'conn' in locals() and conn:
             conn.close()
 
 
-def get_db_connection() -> sqlite3.Connection | None:
+def get_db_connection():
     """
-    Retorna uma nova conexão com o banco de dados.
-    Usar 'row_factory = sqlite3.Row' nos permite acessar dados por nome
-    de coluna (como um dicionário), o que é muito mais limpo.
+    Retorna conexão ou levanta erro. Nunca retorna None silenciosamente.
     """
-    conn = None
     try:
         conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row  # Permite acesso estilo dict
+        conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON;")
         return conn
     except sqlite3.Error as e:
-        logger.error(f"Erro ao conectar ao banco de dados: {e}", exc_info=True)
-        if conn:
-            conn.close()
-        return None
+        logger.error(f"Falha de conexão SQLite: {e}")
+        raise DatabaseError("Não foi possível conectar ao banco de dados.", e)
