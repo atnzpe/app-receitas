@@ -9,6 +9,7 @@ from src.utils.theme import AppThemes
 from src.views.login_view import LoginView
 from src.views.register_view import RegisterView
 from src.views.dashboard_view import DashboardView
+from src.views.category_view import CategoryView
 
 logger = get_logger("main")
 
@@ -76,7 +77,15 @@ def main(page: ft.Page):
                         page.go("/login")
                     else:
                         page.views.append(DashboardView(page))
+
+                elif page.route == "/categories":
+                    if page.session.get("logged_in_user") is None:
+                        page.go("/login")  # Proteção de rota
+                    else:
+                        page.views.append(CategoryView(page))
+                        
                 page.update()
+                
             except Exception as view_error:
                 # Captura erros na construção da View
                 global_error_handler(view_error)

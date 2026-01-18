@@ -105,8 +105,6 @@ class DashboardViewModel:
         self.page.update()
 
     def navigate_to_cadastros(self, e):
-        """Ação específica para o card 'Cadastros' (Sprint 3)."""
-        # TODO: Implementar a rota /cadastros na Sprint 3
-        logger.info(
-            "Card 'Cadastros' clicado. Rota ainda não implementada (Sprint 3).")
-        self.show_feature_in_development_dialog(e)
+        """Navega para a tela de Categorias (Sprint 3)."""
+        logger.info("Navegando para Gestão de Categorias (/categories).")
+        self.page.go("/categories")
