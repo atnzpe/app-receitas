@@ -1,24 +1,46 @@
-# 🍳 Guia Mestre de Receitas (App de Receitas Culinárias)
+# 🍳 Guia Mestre de Receitas
 
-Este é um aplicativo multiplataforma (Desktop e Android) para organização e descoberta de receitas culinárias, construído com Python e Flet Framework.
+![Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow) ![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![Flet](https://img.shields.io/badge/Flet-Cross_Platform-purple) ![License](https://img.shields.io/badge/License-MIT-green)
 
-O projeto segue uma arquitetura **MVVM (Model-View-ViewModel)** rigorosa e um design **Offline-First**, garantindo que o aplicativo funcione perfeitamente sem conexão com a internet, utilizando um banco de dados local SQLite.
+Aplicativo profissional para organização e descoberta de receitas culinárias, desenvolvido com arquitetura **Offline-First**, foco em alta performance, integridade de dados e UX moderna.
 
-**Visão Geral:** O objetivo é criar um organizador de receitas centralizado, permitindo importação de múltiplas fontes e descoberta baseada em ingredientes. As funcionalidades planejadas incluem gerenciamento completo (CRUD) de Receitas, Ingredientes, Categorias, Fornecedores (para listas de compras), Links de Mercados parceiros, e edição de perfil de usuário.
+**Conceito:** O app atua como uma rede social culinária, agregando receitas nativas e de múltiplos usuários, mas mantendo a estética e organização de um livro de receitas clássico e pessoal.
 
-![Screenshot do Dashboard do App de Receitas no tema claro](https://i.imgur.com/your-dashboard-image.png)
+## 🚀 Visão do Produto
 
-## 🗺️ Roadmap do Projeto
+Um hub centralizado para gestão culinária que permite importar receitas, gerenciar despensa e planejar compras. O ecossistema integra tanto **receitas nativas** (curadoria do app) quanto **receitas da comunidade** (outros usuários).
 
-Nosso plano de desenvolvimento detalhado e o status atual das Sprints estão em nosso [**ROADMAP.md**](ROADMAP.md).
+O sistema é projetado para ser resiliente, funcionando sem internet e sincronizando quando possível em uma base de dados gratuita e sustentável (visão de futuro).
 
-## 🛠️ Stack de Tecnologia
+**Plataformas Alvo:**
+* 🖥️ **Desktop:** Windows (`.exe`)
+* 📱 **Mobile:** Android (`.apk`)
 
+## 🗺️ Roadmap e Status
+
+Acompanhe o progresso detalhado das Sprints e o cronograma de implementação acessando nosso [**ROADMAP.md**](ROADMAP.md).
+
+## 🏛️ Arquitetura Técnica (Military Grade)
+
+O projeto segue rigorosamente o padrão **MVVM (Model-View-ViewModel)** com uma camada de **Core** blindada para prevenção de erros ("Fail-Fast").
+
+### Stack Tecnológico
 * **Linguagem:** Python 3.10+
-* **Framework UI:** Flet (baseado em Flutter)
-* **Banco de Dados Local:** SQLite (Offline-First)
-* **Segurança:** `bcrypt` para hashing de senhas.
-* **Padrão de Arquitetura:** MVVM (Model-View-ViewModel)
+* **UI Framework:** [Flet](https://flet.dev) (Baseado em Flutter)
+* **Banco de Dados:** SQLite (Transacional, FKs ativas)
+* **Segurança:** `bcrypt` (Hashing), `Pydantic V2` (Validação de Dados)
+* **Observabilidade:** Logs estruturados com rotação diária.
+
+### Estrutura de Diretórios
+```text
+/src
+|-- /core       # Núcleo blindado (Logger, Exceptions, Configs)
+|-- /models     # Modelos de dados com validação Pydantic V2
+|-- /database   # Persistência, Queries SQL otimizadas e Migrations
+|-- /viewmodels # Lógica de estado e regras de negócio (sem UI direta)
+|-- /views      # Interface do usuário (Widgets Flet e Componentes)
+|-- /utils      # Temas, constantes e auxiliares
+```
 
 ## 🏛️ Arquitetura do Projeto
 
