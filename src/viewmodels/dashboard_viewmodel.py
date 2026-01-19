@@ -1,8 +1,4 @@
-# CÓDIGO COMPLETO E COMENTADO
-"""
-ViewModel para o DashboardView.
-Gerencia o estado da UI e os eventos de clique do Dashboard.
-"""
+# CÓDIGO ATUALIZADO
 import flet as ft
 import logging
 from src.models.user_model import User
@@ -12,101 +8,56 @@ logger = logging.getLogger(__name__)
 
 
 class DashboardViewModel:
-
     def __init__(self, page: ft.Page):
         self.page = page
-        # Recupera o usuário logado da sessão
-        self.user: User = self.page.session.get("logged_in_user")
-        logger.debug(
-            f"DashboardViewModel inicializado para o usuário: {self.user.email}")
+        # Recupera de page.data
+        self.user: User = self.page.data.get("logged_in_user")
 
-        # Referência ao ícone de tema para atualização
+        # Fallback de segurança se o usuário for None (não deveria acontecer)
+        if not self.user:
+            logger.warning("Usuário não encontrado na sessão (page.data).")
+
+        logger.debug(
+            f"Dashboard VM init: {self.user.email if self.user else 'None'}")
         self.theme_icon_button: Optional[ft.IconButton] = None
 
     def on_logout(self, e):
-        """Limpa a sessão e retorna ao login."""
-        logger.info(
-            f"Logout solicitado pelo usuário: {self.user.email}. Redirecionando para /login.")
-        self.page.session.clear()
+        logger.info("Logout solicitado.")
+        self.page.data["logged_in_user"] = None  # Limpa sessão
         self.page.go("/login")
 
     def toggle_theme(self, e):
-        """
-        Troca o tema da página (light/dark).
-
-        """
         try:
-            current_mode = self.page.theme_mode
-            self.page.theme_mode = (
-                ft.ThemeMode.LIGHT
-                if current_mode == ft.ThemeMode.DARK
-                else ft.ThemeMode.DARK
-            )
-
+            current = self.page.theme_mode
+            self.page.theme_mode = ft.ThemeMode.LIGHT if current == ft.ThemeMode.DARK else ft.ThemeMode.DARK
             if self.theme_icon_button:
                 self.theme_icon_button.icon = self.get_theme_icon()
-
-            logger.debug(f"Tema alterado para: {self.page.theme_mode}")
             self.page.update()
         except Exception as ex:
-            logger.error(f"Erro ao trocar o tema: {ex}", exc_info=True)
+            logger.error(f"Erro tema: {ex}")
 
     def get_theme_icon(self) -> str:
-        """
-        Retorna o ícone correto com base no tema atual.
-
-        """
         if self.page.theme_mode == ft.ThemeMode.SYSTEM:
-            current_theme = self.page.platform_brightness
-            return (
-                ft.Icons.LIGHT_MODE_OUTLINED
-                if current_theme == ft.Brightness.DARK
-                else ft.Icons.DARK_MODE_OUTLINED
-            )
+            return ft.Icons.LIGHT_MODE_OUTLINED if self.page.platform_brightness == ft.Brightness.DARK else ft.Icons.DARK_MODE_OUTLINED
+        return ft.Icons.LIGHT_MODE_OUTLINED if self.page.theme_mode == ft.ThemeMode.DARK else ft.Icons.DARK_MODE_OUTLINED
 
-        return (
-            ft.Icons.LIGHT_MODE_OUTLINED  # Ícone de Sol (está no modo escuro)
-            if self.page.theme_mode == ft.ThemeMode.DARK
-            # Ícone de Lua (está no modo claro)
-            else ft.Icons.DARK_MODE_OUTLINED
-        )
-
-    def close_dialog(self, dialog: ft.AlertDialog, e):
-        """Fecha o AlertDialog (overlay)."""
-        logger.debug("Fechando AlertDialog.")
+    def close_dialog(self, dialog, e):
         dialog.open = False
         self.page.update()
 
     def show_feature_in_development_dialog(self, e):
-        """
-        Exibe um AlertDialog (overlay) para funcionalidades
-        ainda não implementadas.
-        """
         card_title = e.control.data if hasattr(
             e, 'control') else "Funcionalidade"
-        logger.debug(f"Exibindo modal 'Em Desenvolvimento' para: {card_title}")
-
         dialog = ft.AlertDialog(
-            modal=True,
             title=ft.Text(f"🚀 Em Breve: {card_title}"),
-            content=ft.Text(
-                "Esta funcionalidade está em desenvolvimento e será implementada em breve, "
-                "seguindo nossa arquitetura MVVM."
-            ),
-            actions=[
-                ft.TextButton(
-                    "Entendido!", on_click=lambda evt: self.close_dialog(dialog, evt))
-            ],
+            content=ft.Text("Funcionalidade em desenvolvimento."),
+            actions=[ft.TextButton(
+                "Ok", on_click=lambda evt: self.close_dialog(dialog, evt))],
             actions_alignment=ft.MainAxisAlignment.END,
         )
-
         self.page.dialog = dialog
         dialog.open = True
         self.page.update()
 
     def navigate_to_cadastros(self, e):
-        """Ação específica para o card 'Cadastros' (Sprint 3)."""
-        # TODO: Implementar a rota /cadastros na Sprint 3
-        logger.info(
-            "Card 'Cadastros' clicado. Rota ainda não implementada (Sprint 3).")
-        self.show_feature_in_development_dialog(e)
+        self.page.go("/categories")

@@ -1,3 +1,4 @@
+# CÓDIGO COMPLETO E BLINDADO
 import sqlite3
 import os
 from src.core.logger import get_logger
@@ -13,9 +14,9 @@ DB_PATH = os.path.join(DB_DIR, DB_NAME)
 def init_database():
     """
     Inicializa o banco de dados. 
-    Lança DatabaseError se falhar, impedindo o app de iniciar quebrado.
+    Define a estrutura com permissões de proprietário (user_id).
     """
-    logger.info("Iniciando verificação de integridade do Banco de Dados...")
+    logger.info("Iniciando verificação de esquema do Banco de Dados...")
 
     try:
         os.makedirs(DB_DIR, exist_ok=True)
@@ -24,7 +25,7 @@ def init_database():
         cursor = conn.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
 
-        # Scripts SQL
+        # Scripts SQL Atualizados
         queries = [
             """
             CREATE TABLE IF NOT EXISTS users (
@@ -34,10 +35,24 @@ def init_database():
                 hashed_password TEXT NOT NULL
             );
             """,
+            # ALTERADO: Adicionado user_id (NULL = Nativa, ID = Usuário)
             """
             CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE
+                name TEXT NOT NULL,
+                user_id INTEGER, 
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+                UNIQUE(name, user_id) -- Impede que o mesmo usuário tenha duas categorias iguais, mas permite repetição entre usuários diferentes
+            );
+            """,
+            # NOVA TABELA: Favoritos (Many-to-Many)
+            """
+            CREATE TABLE IF NOT EXISTS favorite_categories (
+                user_id INTEGER NOT NULL,
+                category_id INTEGER NOT NULL,
+                PRIMARY KEY (user_id, category_id),
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+                FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
             );
             """,
             """
@@ -69,7 +84,8 @@ def init_database():
             cursor.execute(q)
 
         conn.commit()
-        logger.info("Banco de dados verificado e tabelas criadas com sucesso.")
+        logger.info(
+            "Banco de dados atualizado com suporte a permissões e favoritos.")
 
     except sqlite3.Error as e:
         logger.critical(f"Erro Crítico no Banco de Dados: {e}", exc_info=True)
@@ -81,9 +97,6 @@ def init_database():
 
 
 def get_db_connection():
-    """
-    Retorna conexão ou levanta erro. Nunca retorna None silenciosamente.
-    """
     try:
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row

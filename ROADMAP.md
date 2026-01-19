@@ -1,12 +1,3 @@
----
-
-### 3. 🗺️ Arquivo `ROADMAP.md` (Atualizado)
-
-Este arquivo reflete o que já entregamos (Sprints 0-2) e detalha o trabalho imediato (Sprint 3).
-
-**Ação:** Substitua o conteúdo do seu `ROADMAP.md` por este:
-
-```markdown
 # 🗺️ Roadmap do Projeto: Guia Mestre de Receitas
 
 Este documento serve como a fonte única da verdade para o progresso do projeto.
@@ -14,14 +5,12 @@ Este documento serve como a fonte única da verdade para o progresso do projeto.
 ---
 
 ## ✅ Sprint 0: Fundação "Military Grade" (Concluído)
-
 * [x] Definição da Arquitetura MVVM Blindada.
 * [x] Implementação do `src/core` (Logger Central, Exceções Customizadas).
 * [x] Configuração do SQLite com tratamento de erros robusto.
 * [x] Migração de Models para **Pydantic V2**.
 
 ## ✅ Sprint 1: Autenticação e Segurança (Concluído)
-
 * [x] Tabela `users` com constraints de unicidade.
 * [x] Hashing de senha seguro com `bcrypt`.
 * [x] Queries de Auth com tratamento de `IntegrityError`.
@@ -29,28 +18,27 @@ Este documento serve como a fonte única da verdade para o progresso do projeto.
 * [x] Testes unitários de autenticação.
 
 ## ✅ Sprint 2: Dashboard e UI System (Concluído)
-
 * [x] Sistema de Roteamento Protegido (`ft.Router`).
 * [x] Barreira Global de Erros (Crash Handler UI).
 * [x] UI do Dashboard Responsivo (Grid System).
 * [x] Sistema de Temas (Claro/Escuro/Sistema) persistente na sessão.
 * [x] Componentização (`DashboardCard`, `AppFooter`).
 
+## ✅ Sprint 3: Gestão de Categorias (Concluído)
+* [x] **Database:** Implementado `src/database/category_queries.py` com Seed Data.
+* [x] **ViewModel:** Criado `CategoryViewModel` com lógica de permissões e favoritos.
+* [x] **UI:** Implementada `CategoryView` responsiva com Modal e FAB.
+* [x] **Integração:** Card "Cadastros" conectado.
+* [x] **Testes:** Unitários blindados contra duplicidade e segurança.
+
 ---
 
-## 🚧 Sprint 3: Gestão de Categorias (EM ANDAMENTO)
+## 🚧 Sprint 4: Gestão de Fornecedores e Mercados (PRÓXIMO)
+**Foco:** Expandir o ecossistema para compras.
 
-**Foco:** Implementar o CRUD completo para categorização das receitas.
-
-* [ ] **Database:** Implementar `src/database/category_queries.py` (CRUD SQL).
-* [ ] **ViewModel:** Criar `CategoryViewModel` com gestão de estado e validação Pydantic.
-* [ ] **UI:** Criar `CategoryView` com:
-  * Listagem (ListView/DataTable).
-  * Modal de Adição/Edição.
-  * Feedback visual via SnackBar.
-* [ ] **Integração:** Conectar Card "Cadastros" -> Rota `/categories`.
-* [ ] **Testes:** Unitários para queries de categoria.
-
+* [ ] **Database:** Tabela `markets` e `suppliers`.
+* [ ] **UI:** Tela de listagem de mercados com link externo.
+* [ ] **Feature:** Lista de Compras básica (Ingredientes -> Lista).
 ---
 
 ## 📅 Backlog (Planejamento Futuro)
@@ -69,6 +57,7 @@ Este documento serve como a fonte única da verdade para o progresso do projeto.
 
 * Importação via Link (Web Scraping).
 * Leitura via OCR/Voz.
+* Leitura via importar PDF
 
 ### Sprint 7: Infraestrutura e Deploy
 

@@ -1,3 +1,4 @@
+# CÓDIGO ATUALIZADO
 import flet as ft
 from typing import Optional
 from src.core.logger import get_logger
@@ -35,14 +36,19 @@ class LoginViewModel:
             user = auth_queries.get_user_by_email_and_password(email, password)
 
             if user:
-                self.page.session.set("logged_in_user", user)
+                # CORREÇÃO: Usando page.data para persistência em memória
+                if self.page.data is None:
+                    self.page.data = {}
+                self.page.data["logged_in_user"] = user
+
+                logger.info(f"Sessão iniciada: {user.email}")
                 self.page.go("/")
             else:
                 self._show_overlay("Credenciais inválidas.")
 
         except Exception as ex:
             logger.error(f"Erro no login: {ex}", exc_info=True)
-            self._show_overlay("Erro interno. Tente novamente.")
+            self._show_overlay("Erro interno.")
 
     def on_navigate_to_register(self, e):
         self.page.go("/register")
