@@ -1,86 +1,62 @@
-# 🍳 Guia Mestre de Receitas
+# **🗺️ Roadmap do Projeto: Guia Mestre de Receitas**
 
-![Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow) ![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![Flet](https://img.shields.io/badge/Flet-Cross_Platform-purple) ![License](https://img.shields.io/badge/License-MIT-green)
+Este documento serve como a fonte única da verdade para o progresso do projeto.
 
-Aplicativo profissional para organização e descoberta de receitas culinárias, desenvolvido com arquitetura **Offline-First**, foco em alta performance, integridade de dados e UX moderna.
+## **✅ Sprint 0: Fundação "Military Grade" (Concluído)**
 
-**Conceito:** O app atua como uma rede social culinária, agregando receitas nativas e de múltiplos usuários, mas mantendo a estética e organização de um livro de receitas clássico e pessoal.
+* \[x\] Definição da Arquitetura MVVM Blindada.  
+* \[x\] Implementação do src/core (Logger Central, Exceções Customizadas).  
+* \[x\] Configuração do SQLite com tratamento de erros robusto.  
+* \[x\] Migração de Models para **Pydantic V2**.
 
-## 🚀 Visão do Produto
+## **✅ Sprint 1: Autenticação e Segurança (Concluído)**
 
-Um hub centralizado para gestão culinária que permite importar receitas, gerenciar despensa e planejar compras. O ecossistema integra tanto **receitas nativas** (curadoria do app) quanto **receitas da comunidade** (outros usuários).
+* \[x\] Tabela users com constraints de unicidade.  
+* \[x\] Hashing de senha seguro com bcrypt.  
+* \[x\] Queries de Auth com tratamento de IntegrityError.  
+* \[x\] Telas de Login e Registro com validação visual.  
+* \[x\] Testes unitários de autenticação.
 
-O sistema é projetado para ser resiliente, funcionando sem internet e sincronizando quando possível em uma base de dados gratuita e sustentável (visão de futuro).
+## **✅ Sprint 2: Dashboard e UI System (Concluído)**
 
-**Plataformas Alvo:**
-* 🖥️ **Desktop:** Windows (`.exe`)
-* 📱 **Mobile:** Android (`.apk`)
+* \[x\] Sistema de Roteamento Protegido (ft.Router).  
+* \[x\] Barreira Global de Erros (Crash Handler UI).  
+* \[x\] UI do Dashboard Responsivo (Grid System).  
+* \[x\] Sistema de Temas (Claro/Escuro/Sistema) persistente na sessão.  
+* \[x\] Componentização (DashboardCard, AppFooter).
 
-## 🗺️ Roadmap e Status
+## **✅ Sprint 3: Gestão de Categorias (Concluído)**
 
-Acompanhe o progresso detalhado das Sprints e o cronograma de implementação acessando nosso [**ROADMAP.md**](ROADMAP.md).
+* \[x\] **Database:** Implementado src/database/category\_queries.py com Seed Data.  
+* \[x\] **ViewModel:** Criado CategoryViewModel com lógica de permissões e favoritos.  
+* \[x\] **UI:** Implementada CategoryView responsiva com Modal e FAB.  
+* \[x\] **Integração:** Card "Cadastros" conectado.  
+* \[x\] **Testes:** Unitários blindados contra duplicidade e segurança.
 
-## 🏛️ Arquitetura Técnica (Military Grade)
+## **🚧 Sprint 4: Core de Receitas (PRIORIDADE MÁXIMA)**
 
-O projeto segue rigorosamente o padrão **MVVM (Model-View-ViewModel)** com uma camada de **Core** blindada para prevenção de erros ("Fail-Fast").
+**Foco:** O coração do aplicativo. Permitir a criação completa de receitas.
 
-### Stack Tecnológico
-* **Linguagem:** Python 3.10+
-* **UI Framework:** [Flet](https://flet.dev) (Baseado em Flutter)
-* **Banco de Dados:** SQLite (Transacional, FKs ativas)
-* **Segurança:** `bcrypt` (Hashing), `Pydantic V2` (Validação de Dados)
-* **Observabilidade:** Logs estruturados com rotação diária.
+* \[ \] **Database:** Tabela recipes (Atualização de Schema) e recipe\_ingredients.  
+* \[ \] **Model:** Refinamento do Pydantic para Recipe e Ingredient (Mestre-Detalhe).  
+* \[ \] **UI \- Cadastro:** Formulário complexo (Nome, Tempo, Categoria, Dificuldade).  
+* \[ \] **UI \- Ingredientes:** Lista dinâmica (Adicionar/Remover ingredientes na mesma tela).  
+* \[ \] **UI \- Mídia:** Campo para URL de imagem ou Upload local.
 
-### Estrutura de Diretórios
-```text
-/src
-|-- /core       # Núcleo blindado (Logger, Exceptions, Configs)
-|-- /models     # Modelos de dados com validação Pydantic V2
-|-- /database   # Persistência, Queries SQL otimizadas e Migrations
-|-- /viewmodels # Lógica de estado e regras de negócio (sem UI direta)
-|-- /views      # Interface do usuário (Widgets Flet e Componentes)
-|-- /utils      # Temas, constantes e auxiliares
-```
+## **📅 Backlog (Planejamento Futuro)**
 
-## 🏛️ Arquitetura do Projeto
+### **Sprint 5: Inteligência e Importação (Diferencial Competitivo)**
 
-O código é estritamente separado nas seguintes camadas:
+* Importação via Link (Web Scraping de sites de receitas).  
+* Leitura via OCR (Foto de livro de receitas).  
+* Leitura via PDF.
 
-* `/src/models`: Data Models (dataclasses) para `User`, `Recipe`, etc.
-* `/src/database`: Lógica de acesso ao banco de dados (conexão e queries).
-* `/src/viewmodels`: Lógica de estado e apresentação (sem dependência direta de Flet).
-* `/src/views`: Definição da UI (controles Flet) e componentes reutilizáveis.
-* `/src/utils`: Código auxiliar (logging, temas, constantes de design).
-* `/main.py`: Ponto de entrada, configuração e roteamento.
+### **Sprint 6: Gestão de Compras e Mercados**
 
-## 🏃 Como Executar o Projeto
+* Gerar Lista de Compras a partir de uma Receita.  
+* CRUD de Mercados/Fornecedores.
 
-1.  Clone o repositório:
-    ```bash
-    git clone [https://github.com/atnzpe/app-receitas.git](https://github.com/atnzpe/app-receitas.git)
-    cd app-receitas
-    ```
+### **Sprint 7: Infraestrutura e Deploy (Nuvem)**
 
-2.  Crie e ative um ambiente virtual:
-    ```bash
-    python -m venv venv
-    # Windows
-    .\venv\Scripts\activate
-    # macOS/Linux
-    source venv/bin/activate
-    ```
-
-3.  Instale as dependências:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4.  Execute o aplicativo:
-    ```bash
-    python main.py
-    ```
-
-5.  Execute os testes:
-    ```bash
-    python -m unittest discover tests
-    ```
+* Integração Firebase (Auth/Sync).  
+* CI/CD para Build Windows e Android.
