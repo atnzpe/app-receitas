@@ -2,4 +2,4 @@ flet
 bcrypt
 numpy
 pandas
-pydantic>=2.0.0
+pydantic

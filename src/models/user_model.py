@@ -1,18 +1,19 @@
-from pydantic import BaseModel, EmailStr, Field
+# CÓDIGO ATUALIZADO (PYDANTIC V2)
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 
 class User(BaseModel):
     """
-    Modelo de Usuário Blindado.
-    Usa Pydantic para garantir que o email seja válido e os campos obrigatórios existam.
+    Modelo de Usuário Blindado (Pydantic V2).
     """
+    # Configuração moderna V2: remove espaços de strings automaticamente
+    model_config = ConfigDict(
+        from_attributes=True,
+        str_strip_whitespace=True
+    )
+
     id: Optional[int] = None
-    full_name: str = Field(..., min_length=2, strip_whitespace=True)
-    email: str = Field(..., strip_whitespace=True)
-    # Nota: Em produção real, usar EmailStr do pydantic[email] é recomendado.
-
-    # O hashed_password não trafega neste objeto de sessão por segurança.
-
-    class Config:
-        from_attributes = True  # Permite converter objetos ORM/SQLite para Pydantic
+    # 'min_length' continua válido no Field
+    full_name: str = Field(..., min_length=2)
+    email: str = Field(...)

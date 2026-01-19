@@ -1,75 +1,70 @@
 # ARQUIVO: src/views/category_view.py
-# CÓDIGO COMPLETO E BLINDADO
-
+# CÓDIGO CORRIGIDO
 import flet as ft
 from src.viewmodels.category_viewmodel import CategoryViewModel
 from src.utils.theme import AppDimensions
 
 
 def CategoryView(page: ft.Page) -> ft.View:
-    """
-    Tela de CRUD de Categorias.
-    Apresenta uma lista rolável e um botão flutuante para adicionar novos itens.
-    """
-
-    # Instancia o Cérebro da Tela
     vm = CategoryViewModel(page)
 
-    # --- Elementos do Modal (Formulário) ---
+    # --- Input Modal ---
     name_field = ft.TextField(
         label="Nome da Categoria",
-        hint_text="Ex: Massas Artesanais",
-        on_submit=vm.save_category,  # UX: Salvar ao dar Enter
-        text_capitalization=ft.TextCapitalization.SENTENCES,
-        prefix_icon=ft.Icons.LABEL
+        hint_text="Ex: Low Carb",
+        capitalization=ft.TextCapitalization.SENTENCES,
+        on_submit=vm.save_category,
+        border_radius=AppDimensions.BORDER_RADIUS,
+        prefix_icon=ft.Icons.LABEL_OUTLINE
     )
 
+    vm.name_field = name_field
+
+    # Dialog definido, mas NÃO anexado ao page.dialog aqui.
+    # O ViewModel cuidará de colocá-lo no overlay.
     dialog = ft.AlertDialog(
-        content=ft.Container(content=name_field, width=300),
+        title=ft.Text("Nova Categoria"),
+        content=ft.Container(content=name_field, height=70),
         actions=[
             ft.TextButton("Cancelar", on_click=vm.close_dialog),
-            ft.ElevatedButton(
-                "Salvar", on_click=vm.save_category, icon=ft.Icons.SAVE),
+            ft.ElevatedButton("Salvar", on_click=vm.save_category),
         ],
         actions_alignment=ft.MainAxisAlignment.END,
-        shape=ft.RoundedRectangleBorder(radius=10)
     )
 
-    # Injeção de Dependência (Conecta View -> ViewModel)
-    vm.name_field = name_field
     vm.dialog = dialog
-    page.dialog = dialog  # Necessário para o overlay funcionar
+    # REMOVIDO: page.dialog = dialog
 
-    # --- Lista de Dados ---
+    # --- Lista ---
     list_view = ft.ListView(
         expand=True,
         spacing=5,
-        padding=10,
-        auto_scroll=False
+        padding=10
     )
     vm.list_view = list_view
 
-    # --- Botão Flutuante (FAB) ---
-    fab = ft.FloatingActionButton(
-        icon=ft.Icons.ADD,
-        text="Nova Categoria",
-        on_click=lambda _: vm.open_dialog(None),
-        bgcolor=page.theme.color_scheme.primary,  # Cor do tema
-    )
-
-    # --- Cabeçalho (Navigation) ---
+    # --- AppBar ---
     app_bar = ft.AppBar(
         leading=ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
-            tooltip="Voltar ao Dashboard",
-            on_click=lambda _: page.go("/")  # Navegação segura via Rota
+            on_click=lambda _: page.go("/"),
+            tooltip="Voltar ao Dashboard"
         ),
-        title=ft.Text("Gerenciar Categorias"),
+        title=ft.Text("Gerenciar Categorias", weight=ft.FontWeight.BOLD),
         center_title=False,
-        bgcolor=ft.Colors.with_opacity(0.04, ft.Colors.BLACK)
+        bgcolor=page.theme.color_scheme.surface,
+        elevation=0
     )
 
-    # Carrega os dados (Seed + User Data)
+    # --- FAB ---
+    fab = ft.FloatingActionButton(
+        icon=ft.Icons.ADD,
+        content=ft.Text("Nova", weight=ft.FontWeight.BOLD),
+        on_click=vm.open_dialog,
+        bgcolor=page.theme.color_scheme.primary,
+    )
+
+    # Init
     vm.initialize()
 
     return ft.View(
@@ -80,13 +75,19 @@ def CategoryView(page: ft.Page) -> ft.View:
             ft.SafeArea(
                 content=ft.Column(
                     controls=[
-                        # Aqui poderíamos adicionar uma barra de busca no futuro
-                        ft.Container(list_view, expand=True)
+                        ft.Container(
+                            content=list_view,
+                            expand=True,
+                            width=800,
+                            alignment=ft.Alignment(0, -1),
+                        )
                     ],
-                    expand=True
+                    expand=True,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
                 ),
                 expand=True
             )
         ],
-        bgcolor=page.theme.color_scheme.background
+        bgcolor=page.theme.color_scheme.surface,
+        padding=0
     )
