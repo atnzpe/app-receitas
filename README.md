@@ -67,4 +67,4 @@ Adotamos um fluxo estrito para garantir a estabilidade do código:
 
 ## **🗺️ Roadmap e Status**
 
-Acompanhe o progresso detalhado das Sprints e o cronograma de implementação acessando nosso [**ROADMAP.md**](https://www.google.com/search?q=ROADMAP.md).
+Acompanhe o progresso detalhado das Sprints e o cronograma de implementação acessando nosso [**ROADMAP.md**](ROADMAP.md).
