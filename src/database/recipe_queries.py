@@ -1,6 +1,7 @@
 # ARQUIVO: src/database/recipe_queries.py
-# OBJETIVO: Centralizar operações de escrita/leitura de receitas com transações seguras.
+# OBJETIVO: Centralizar operações de receitas (Create, Read, Update, Delete).
 import sqlite3
+from typing import List, Dict, Any, Optional
 from src.core.logger import get_logger
 from src.core.exceptions import DatabaseError
 from src.database.database import get_db_connection
@@ -11,24 +12,17 @@ logger = get_logger("src.database.recipe")
 
 class RecipeQueries:
     def __init__(self, db_path: str = None):
-        # Permite injeção de dependência para testes, se necessário
         pass
 
     def _get_connection(self):
         return get_db_connection()
 
     def create_recipe(self, recipe_data: RecipeCreate, user_id: int) -> bool:
-        """
-        Cria uma receita e seus ingredientes em uma TRANSAÇÃO ATÔMICA.
-        Se falhar nos ingredientes, a receita não é salva.
-        """
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            # Inicia transação explicitamente para garantir atomicidade
             conn.execute("BEGIN TRANSACTION")
 
-            # 1. Inserir Cabeçalho da Receita
             cursor.execute("""
                 INSERT INTO recipes (
                     user_id, category_id, title, preparation_time, servings, 
@@ -41,43 +35,34 @@ class RecipeQueries:
                 recipe_data.source, recipe_data.image_path
             ))
 
-            # Recupera o ID da receita recém-criada
             recipe_id = cursor.lastrowid
 
-            # 2. Inserir Ingredientes (Lote)
             if recipe_data.ingredients:
                 ingredients_data = [
                     (recipe_id, ing.name, ing.quantity, ing.unit)
                     for ing in recipe_data.ingredients
                 ]
-                # executemany é muito mais performático para inserts em lote
                 cursor.executemany("""
                     INSERT INTO recipe_ingredients (recipe_id, name, quantity, unit)
                     VALUES (?, ?, ?, ?)
                 """, ingredients_data)
 
-            # Se chegou aqui sem erro, confirma tudo no disco
             conn.commit()
             logger.info(
-                f"Receita '{recipe_data.title}' (ID: {recipe_id}) criada com sucesso.")
+                f"Receita '{recipe_data.title}' (ID: {recipe_id}) criada.")
             return True
 
         except sqlite3.Error as e:
-            # Em caso de qualquer erro, desfaz TUDO
             conn.rollback()
-            logger.error(f"Transação falhou ao criar receita (Rollback): {e}")
-            raise DatabaseError(f"Erro ao salvar receita no banco: {e}")
+            logger.error(f"Erro ao criar receita: {e}")
+            raise DatabaseError(f"Erro ao salvar: {e}")
         finally:
             conn.close()
 
-    def get_user_recipes(self, user_id: int) -> list:
-        """
-        Retorna todas as receitas criadas pelo usuário ou favoritadas por ele.
-        """
+    def get_user_recipes(self, user_id: int) -> List[Dict[str, Any]]:
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            # Query Híbrida: Receitas do Dono OR Receitas Favoritadas
             sql = """
                 SELECT DISTINCT r.*, 
                        CASE WHEN fr.user_id IS NOT NULL THEN 1 ELSE 0 END as is_favorite
@@ -88,18 +73,28 @@ class RecipeQueries:
             """
             cursor.execute(sql, (user_id, user_id))
             rows = cursor.fetchall()
-
-            # Retorna lista de dicionários (ou objetos Pydantic se preferir converter aqui)
             return [dict(row) for row in rows]
-
         except sqlite3.Error as e:
             logger.error(f"Erro ao buscar receitas: {e}")
             return []
         finally:
             conn.close()
 
-    def toggle_recipe_favorite(self, recipe_id: int, user_id: int) -> bool:
-        """Alterna favorito da receita."""
+    def delete_recipe(self, recipe_id: int, user_id: int) -> bool:
+        conn = self._get_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "DELETE FROM recipes WHERE id = ? AND user_id = ?", (recipe_id, user_id))
+            conn.commit()
+            return cursor.rowcount > 0
+        except sqlite3.Error as e:
+            logger.error(f"Erro ao deletar: {e}")
+            return False
+        finally:
+            conn.close()
+
+    def toggle_favorite(self, recipe_id: int, user_id: int) -> bool:
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
@@ -108,15 +103,95 @@ class RecipeQueries:
             if cursor.fetchone():
                 cursor.execute(
                     "DELETE FROM favorite_recipes WHERE user_id=? AND recipe_id=?", (user_id, recipe_id))
-                result = False  # Removeu
+                result = False
             else:
                 cursor.execute(
                     "INSERT INTO favorite_recipes (user_id, recipe_id) VALUES (?, ?)", (user_id, recipe_id))
-                result = True  # Adicionou
+                result = True
             conn.commit()
             return result
         except sqlite3.Error as e:
-            logger.error(f"Erro no toggle favorite: {e}")
+            logger.error(f"Erro toggle favorite: {e}")
             return False
+        finally:
+            conn.close()
+
+    # --- MÉTODOS PARA EDIÇÃO (UPDATE) ---
+
+    def get_recipe_details(self, recipe_id: int) -> Optional[Dict[str, Any]]:
+        """Busca dados completos da receita para edição."""
+        conn = self._get_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM recipes WHERE id = ?", (recipe_id,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+
+            recipe = dict(row)
+
+            # Busca ingredientes
+            cursor.execute(
+                "SELECT name, quantity, unit FROM recipe_ingredients WHERE recipe_id = ?", (recipe_id,))
+            ing_rows = cursor.fetchall()
+            recipe['ingredients'] = [dict(row) for row in ing_rows]
+
+            return recipe
+        except sqlite3.Error as e:
+            logger.error(f"Erro ao buscar detalhes: {e}")
+            return None
+        finally:
+            conn.close()
+
+    def update_recipe(self, recipe_id: int, recipe_data: RecipeCreate, user_id: int) -> bool:
+        """Atualiza receita e recria ingredientes."""
+        conn = self._get_connection()
+        try:
+            cursor = conn.cursor()
+            conn.execute("BEGIN TRANSACTION")
+
+            # Verifica propriedade
+            cursor.execute(
+                "SELECT 1 FROM recipes WHERE id = ? AND user_id = ?", (recipe_id, user_id))
+            if not cursor.fetchone():
+                logger.warning(
+                    f"Tentativa de editar receita alheia: {recipe_id}")
+                return False
+
+            # Atualiza dados básicos
+            cursor.execute("""
+                UPDATE recipes SET 
+                    category_id=?, title=?, preparation_time=?, servings=?, 
+                    instructions=?, additional_instructions=?, source=?, updated_at=CURRENT_TIMESTAMP
+                WHERE id=?
+            """, (
+                recipe_data.category_id, recipe_data.title,
+                recipe_data.preparation_time, recipe_data.servings,
+                recipe_data.instructions, recipe_data.additional_instructions,
+                recipe_data.source, recipe_id
+            ))
+
+            # Atualiza Ingredientes (Delete + Insert)
+            cursor.execute(
+                "DELETE FROM recipe_ingredients WHERE recipe_id = ?", (recipe_id,))
+
+            if recipe_data.ingredients:
+                ingredients_data = [
+                    (recipe_id, ing.name, ing.quantity, ing.unit)
+                    for ing in recipe_data.ingredients
+                ]
+                cursor.executemany("""
+                    INSERT INTO recipe_ingredients (recipe_id, name, quantity, unit)
+                    VALUES (?, ?, ?, ?)
+                """, ingredients_data)
+
+            conn.commit()
+            logger.info(f"Receita {recipe_id} atualizada.")
+            return True
+
+        except sqlite3.Error as e:
+            conn.rollback()
+            logger.error(f"Erro ao atualizar: {e}")
+            raise DatabaseError("Falha na atualização.", e)
         finally:
             conn.close()
