@@ -1,0 +1,79 @@
+# ARQUIVO: src/viewmodels/recipe_list_viewmodel.py
+# OBJETIVO: Gerenciar lista e navegação para edição.
+import flet as ft
+from typing import Optional
+from src.core.logger import get_logger
+from src.database.recipe_queries import RecipeQueries
+from src.models.user_model import User
+
+logger = get_logger("src.viewmodels.recipe_list")
+
+class RecipeListViewModel:
+    def __init__(self, page: ft.Page):
+        self.page = page
+        self.db = RecipeQueries()
+        self.recipes = []
+        self.user: User = self.page.data.get("logged_in_user")
+        self.current_dialog: Optional[ft.AlertDialog] = None
+
+    def _close_dialog(self, e):
+        if self.current_dialog:
+            self.current_dialog.open = False
+            self.page.update()
+
+    def _show_feedback_modal(self, title: str, message: str, is_error: bool = False):
+        icon = ft.Icons.ERROR_OUTLINE if is_error else ft.Icons.CHECK_CIRCLE_OUTLINE
+        color = ft.Colors.RED if is_error else ft.Colors.GREEN
+
+        dlg = ft.AlertDialog(
+            title=ft.Row([ft.Icon(icon, color=color, size=30), ft.Text(title)], alignment=ft.MainAxisAlignment.START),
+            content=ft.Text(message, size=16),
+            actions=[ft.TextButton("OK", on_click=self._close_dialog)],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        self.current_dialog = dlg
+        self.page.overlay.append(dlg)
+        dlg.open = True
+        self.page.update()
+
+    def load_recipes(self):
+        if not self.user: return
+        try:
+            self.recipes = self.db.get_user_recipes(self.user.id)
+            self.page.update()
+        except Exception as e:
+            logger.error(f"Erro load: {e}")
+
+    def delete_recipe(self, recipe_id: int):
+        try:
+            if self.db.delete_recipe(recipe_id, self.user.id):
+                self.load_recipes()
+                self._show_feedback_modal("Sucesso", "Receita excluída com sucesso!")
+            else:
+                self._show_feedback_modal("Erro", "Você não tem permissão para excluir esta receita.", is_error=True)
+        except Exception as e:
+            self._show_feedback_modal("Erro", str(e), is_error=True)
+
+    def toggle_favorite(self, recipe_id: int):
+        try:
+            status = self.db.toggle_favorite(recipe_id, self.user.id)
+            msg = "Adicionado aos Favoritos!" if status else "Removido dos Favoritos."
+            self.load_recipes()
+            self._show_feedback_modal("Favoritos", msg, is_error=False)
+        except Exception:
+            self._show_feedback_modal("Erro", "Falha ao atualizar favorito.", is_error=True)
+
+    def navigate_to_create(self, e):
+        # Limpa qualquer ID de edição pendente para iniciar limpo
+        if "editing_recipe_id" in self.page.data:
+            del self.page.data["editing_recipe_id"]
+        self.page.go("/create_recipe")
+        
+    def navigate_to_edit(self, recipe_id: int):
+        # Configura sessão para modo edição
+        self.page.data["editing_recipe_id"] = recipe_id
+        logger.info(f"Iniciando edição da receita {recipe_id}")
+        self.page.go("/create_recipe")
+
+    def navigate_to_details(self, recipe_id):
+        pass

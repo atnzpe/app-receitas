@@ -1,102 +1,114 @@
+# ARQUIVO: main.py
+# OBJETIVO: Core da aplicação (CORRIGIDO: Remove aninhamento incorreto de Views)
 import flet as ft
 import traceback
 from src.database.database import init_database
 from src.core.logger import get_logger
-from src.core.exceptions import AppError
 from src.utils.theme import AppThemes
 
-# Importações de Views
+# --- Imports das Views ---
 from src.views.login_view import LoginView
 from src.views.register_view import RegisterView
 from src.views.dashboard_view import DashboardView
+from src.views.category_view import CategoryView
+from src.views.recipe_create_view import RecipeCreateView
+from src.views.recipe_list_view import RecipeListView
 
 logger = get_logger("main")
 
 
 def main(page: ft.Page):
-    # --- GLOBAL ERROR BOUNDARY (Blindagem UI) ---
+    # -------------------------------------------------------------------------
+    # 1. Tratamento Global de Erros (Crash Handler)
+    # -------------------------------------------------------------------------
     def global_error_handler(e):
-        """
-        Captura erros não tratados na interface para não fechar o app na cara do usuário.
-        """
-        error_details = f"{type(e).__name__}: {str(e)}"
-        logger.critical(
-            f"UNHANDLED UI EXCEPTION: {error_details}", exc_info=True)
+        error_msg = f"{type(e).__name__}: {str(e)}"
+        logger.critical(f"UNHANDLED UI EXCEPTION: {error_msg}", exc_info=True)
 
-        page.dialog = ft.AlertDialog(
-            title=ft.Text("Erro Inesperado 🛑", color=ft.Colors.RED),
-            content=ft.Container(
-                content=ft.Column([
-                    ft.Text(
-                        "Ocorreu um erro crítico. Por favor, contate o suporte."),
-                    ft.Text(error_details, font_family="monospace",
-                            color=ft.Colors.RED_900, size=12)
-                ], tight=True),
-                padding=10,
-                bgcolor=ft.Colors.RED_50,
-                border_radius=5
-            ),
-            actions=[ft.TextButton(
-                "Fechar", on_click=lambda _: page.window_close())],
+        # Cria o diálogo de erro
+        error_dialog = ft.AlertDialog(
+            title=ft.Text("Erro Crítico", color=ft.Colors.RED),
+            content=ft.Text(
+                f"Ocorreu um erro inesperado.\nVerifique os logs.\n\n{error_msg}"),
+            actions=[
+                ft.TextButton(
+                    "Recarregar", on_click=lambda _: page.window_reload()),
+            ]
         )
-        page.dialog.open = True
-        page.update()
 
-    # Se o Flet suportar, registre o handler (ou use try/except global)
-    # page.on_error = global_error_handler
+        # [BLINDAGEM]: Injeta direto no overlay (seguro para todas as versões)
+        page.overlay.append(error_dialog)
+        error_dialog.open = True
+        page.update()
 
     try:
         logger.info("=== INICIANDO APLICAÇÃO (MILITARY GRADE) ===")
-
-        # 1. Setup Crítico
         init_database()
 
-        # 2. Configuração Visual
+        # 2. Configurações da Janela
         page.title = "Guia Mestre de Receitas"
         page.theme_mode = ft.ThemeMode.SYSTEM
         page.theme = AppThemes.light_theme
         page.dark_theme = AppThemes.dark_theme
-        page.vertical_alignment = ft.MainAxisAlignment.CENTER
-        page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+        page.scroll = ft.ScrollMode.ADAPTIVE
 
-        # 3. Sistema de Roteamento
+        # Inicializa Sessão
+        page.data = {"logged_in_user": None}
+
+        # 3. Gerenciador de Rotas
         def route_change(e: ft.RouteChangeEvent):
             logger.info(f"Navegação: {e.route}")
             page.views.clear()
 
+            user = page.data.get("logged_in_user")
+            is_authenticated = user is not None
+
             try:
+                # --- Rotas Públicas ---
                 if page.route == "/login":
+                    # CORREÇÃO: Adiciona a View retornada diretamente, sem aninhar
                     page.views.append(LoginView(page))
+
                 elif page.route == "/register":
                     page.views.append(RegisterView(page))
-                elif page.route == "/":
-                    if page.session.get("logged_in_user") is None:
-                        logger.warning(
-                            "Acesso não autorizado ao Dashboard. Redirecionando.")
-                        page.go("/login")
-                    else:
-                        page.views.append(DashboardView(page))
-                page.update()
-            except Exception as view_error:
-                # Captura erros na construção da View
-                global_error_handler(view_error)
 
-        def view_pop(e: ft.ViewPopEvent):
+                # --- Rotas Protegidas ---
+                elif not is_authenticated:
+                    logger.warning(
+                        f"Acesso não autorizado a {page.route}. Redirecionando.")
+                    page.go("/login")
+
+                # --- Rotas da Aplicação ---
+                elif page.route == "/":
+                    page.views.append(DashboardView(page))
+
+                elif page.route == "/categories":
+                    page.views.append(CategoryView(page))
+
+                elif page.route == "/my_recipes":
+                    page.views.append(RecipeListView(page))
+
+                elif page.route == "/create_recipe":
+                    page.views.append(RecipeCreateView(page))
+
+                page.update()
+
+            except Exception as ex:
+                global_error_handler(ex)
+
+        def view_pop(e):
             page.views.pop()
-            if page.views:
-                page.go(page.views[-1].route)
+            top_view = page.views[-1]
+            page.go(top_view.route)
 
         page.on_route_change = route_change
         page.on_view_pop = view_pop
 
-        # 4. Boot
+        # Boot
         page.go("/login")
 
-    except AppError as e:
-        logger.critical(f"Falha de Inicialização Controlada: {e}")
     except Exception as e:
-        logger.critical("Falha Catastrófica no Main Loop", exc_info=True)
-        traceback.print_exc()
+        logger.critical("Falha Fatal no Main Loop", exc_info=True)
 
 
 if __name__ == "__main__":
