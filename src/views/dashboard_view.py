@@ -29,16 +29,42 @@ def DashboardView(page: ft.Page) -> ft.View:
 
     dashboard_grid = ft.GridView(
         controls=[
-            DashboardCard(ft.Icons.BOOK_OUTLINED, "Minhas Receitas", "Organize suas receitas.",
-                          CARD_COLORS["Receitas"], vm.show_feature_in_development_dialog),
-            DashboardCard(ft.Icons.EDIT_NOTE_OUTLINED, "Cadastros", "Gerencie categorias.",
-                          CARD_COLORS["Cadastros"], vm.navigate_to_cadastros),
-            DashboardCard(ft.Icons.SEARCH_OUTLINED, "Discovery", "Encontre receitas.",
-                          CARD_COLORS["Discovery"], vm.show_feature_in_development_dialog),
-            DashboardCard(ft.Icons.SHOPPING_CART_OUTLINED, "Mercado", "Apps parceiros.",
-                          CARD_COLORS["Mercado"], vm.show_feature_in_development_dialog),
-            DashboardCard(ft.Icons.LIST_ALT_OUTLINED, "Lista de Compras", "Sua lista.",
-                          CARD_COLORS["Lista"], vm.show_feature_in_development_dialog),
+            # ATUALIZADO: Card 'Minhas Receitas' agora navega para a criação
+            DashboardCard(
+                ft.Icons.BOOK_OUTLINED,
+                "Minhas Receitas",
+                "Crie e organize suas receitas.",
+                CARD_COLORS["Receitas"],
+                vm.navigate_to_my_recipes
+            ),
+            DashboardCard(
+                ft.Icons.EDIT_NOTE_OUTLINED,
+                "Cadastros",
+                "Gerencie categorias.",
+                CARD_COLORS["Cadastros"],
+                vm.navigate_to_cadastros
+            ),
+            DashboardCard(
+                ft.Icons.SEARCH_OUTLINED,
+                "Discovery",
+                "Encontre receitas.",
+                CARD_COLORS["Discovery"],
+                vm.show_feature_in_development_dialog
+            ),
+            DashboardCard(
+                ft.Icons.SHOPPING_CART_OUTLINED,
+                "Mercado",
+                "Apps parceiros.",
+                CARD_COLORS["Mercado"],
+                vm.show_feature_in_development_dialog
+            ),
+            DashboardCard(
+                ft.Icons.LIST_ALT_OUTLINED,
+                "Lista de Compras",
+                "Sua lista.",
+                CARD_COLORS["Lista"],
+                vm.show_feature_in_development_dialog
+            ),
         ],
         expand=True,
         max_extent=350,
@@ -61,5 +87,5 @@ def DashboardView(page: ft.Page) -> ft.View:
             )
         ],
         padding=0,
-        bgcolor=page.theme.color_scheme.surface,  # Uso correto do tema
+        bgcolor=page.theme.color_scheme.surface,
     )
