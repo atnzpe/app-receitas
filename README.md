@@ -4,6 +4,7 @@ Aplicativo profissional para organização e descoberta de receitas culinárias,
 
 **Conceito:** O app atua como uma rede social culinária, agregando receitas nativas e de múltiplos usuários, mas mantendo a estética e organização de um livro de receitas clássico e pessoal.
 
+
 ## **🚀 Funcionalidades Entregues**
 
 * 🔐 **Autenticação Segura:** Login e Registro com hash bcrypt.

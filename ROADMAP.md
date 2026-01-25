@@ -49,6 +49,7 @@ Este documento serve como a fonte única da verdade para o progresso do projeto.
 
 **Foco:** Facilitar a entrada de dados com IA e Automação.
 
+
 * [ ] **Importação via Link:** Extração inteligente de dados de sites de receitas (Web Scraping + LLM).
 * [ ] **Leitura via OCR:** Extração de texto a partir de fotos de livros/cadernos.
 * [ ] **Leitura via Voz:** Transcrição de áudio para texto (Speech-to-Text).
