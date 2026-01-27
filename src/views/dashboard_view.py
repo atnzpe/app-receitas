@@ -30,7 +30,8 @@ def DashboardView(page: ft.Page) -> ft.View:
             "title": "Discovery",
             "desc": "Encontre receitas nativas, suas ou de outros. Pesquise por dispensa.",
             "color": CARD_COLORS["Discovery"]["fg_light"],
-            "action": vm.show_feature_in_development_dialog
+            # [ALTERAÇÃO AQUI] De show_feature... para navigate_to_discovery
+            "action": vm.navigate_to_discovery
         },
         {
             "icon": ft.Icons.SHOPPING_CART_OUTLINED,

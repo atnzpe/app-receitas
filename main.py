@@ -15,6 +15,7 @@ from src.views.category_view import CategoryView
 from src.views.recipe_create_view import RecipeCreateView
 from src.views.recipe_list_view import RecipeListView
 from src.views.recipe_detail_view import RecipeDetailView
+from src.views.discovery_view import DiscoveryView
 
 logger = get_logger("main")
 
@@ -95,6 +96,9 @@ def main(page: ft.Page):
 
                 elif page.route == "/create_recipe":
                     page.views.append(RecipeCreateView(page))
+                    
+                elif page.route == "/discovery":
+                    page.views.append(DiscoveryView(page))
                     
                 elif page.route == "/recipe_detail":
                     page.views.append(RecipeDetailView(page))
