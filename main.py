@@ -19,6 +19,7 @@ from src.views.recipe_detail_view import RecipeDetailView
 logger = get_logger("main")
 
 
+
 def main(page: ft.Page):
     # -------------------------------------------------------------------------
     # 1. Tratamento Global de Erros (Crash Handler)
