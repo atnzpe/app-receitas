@@ -1,0 +1,1336 @@
+[
+  {
+    "title": "Batata Rústica",
+    "category": "Acompanhamentos",
+    "preparation_time": 40,
+    "servings": "4 pessoas",
+    "instructions": "1. Lave bem as batatas com casca. Cozinhe em água fervente por 7 minutos.\n2. Retire, deixe esfriar e corte em 8 partes.\n3. Tempere com sal e pimenta e frite em óleo quente até dourar (8-10 min).\n4. Dica: Para fazer no forno, misture alecrim e azeite e asse por 20 min a 200°C.",
+    "additional_instructions": "Pode usar batata tipo inglesa ou branca.",
+    "source": "Chef Guilherme Guzela",
+    "ingredients": [
+      {"name": "Batata tipo inglesa com casca", "quantity": "1", "unit": "kg"},
+      {"name": "Óleo", "quantity": "2", "unit": "Litros"},
+      {"name": "Alecrim", "quantity": "1", "unit": "ramo"},
+      {"name": "Sal", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Ketchup Caseiro",
+    "category": "Molhos",
+    "preparation_time": 15,
+    "servings": "1 Pote",
+    "instructions": "1. Misture todos os ingredientes em uma panela.\n2. Cozinhe em fogo baixo por alguns minutos até começar a engrossar.\n3. Reserve e sirva frio.",
+    "source": "Chef Guilherme Guzela",
+    "ingredients": [
+      {"name": "Extrato de tomate", "quantity": "1", "unit": "lata"},
+      {"name": "Vinagre de maçã", "quantity": "1.5", "unit": "lata"},
+      {"name": "Açúcar", "quantity": "3", "unit": "colheres"},
+      {"name": "Cebola em pó", "quantity": "1", "unit": "colher café"},
+      {"name": "Salsão em pó", "quantity": "1", "unit": "colher café"},
+      {"name": "Molho de pimenta", "quantity": "1", "unit": "colher"},
+      {"name": "Alho em pó", "quantity": "1", "unit": "pitada"}
+    ]
+  },
+  {
+    "title": "Hambúrguer de Fraldinha Clássico",
+    "category": "Lanches",
+    "preparation_time": 30,
+    "servings": "2 sanduíches",
+    "instructions": "1. Misture as carnes e a gordura geladas. Sove bem.\n2. Divida em 2 bolas e bata a massa (jogando de uma mão para outra) para tirar o ar.\n3. Modele discos maiores que o pão e afunde o centro.\n4. Grelhe em fogo alto, tempere com sal/pimenta ao virar. Derreta o queijo abafando.\n5. Monte: Pão tostado, maionese, salada, carne, queijo.",
+    "source": "Chef Guilherme Guzela",
+    "ingredients": [
+      {"name": "Fraldinha moída", "quantity": "200", "unit": "g"},
+      {"name": "Acém moído", "quantity": "100", "unit": "g"},
+      {"name": "Gordura moída", "quantity": "40", "unit": "g"},
+      {"name": "Pão de hambúrguer", "quantity": "2", "unit": "unid"},
+      {"name": "Queijo prato", "quantity": "2", "unit": "fatias"}
+    ]
+  },
+  {
+    "title": "Aveioca (Panqueca de Aveia)",
+    "category": "Fitness",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Bata o ovo com um garfo.\n2. Adicione o farelo de aveia e os temperos.\n3. Asse em frigideira antiaderente pré-aquecida e levemente untada.\n4. Recheie com legumes e vegetais a gosto.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Farelo de Aveia", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Sal", "quantity": "1", "unit": "pitada"},
+      {"name": "Orégano", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Pão de Aveia de Frigideira",
+    "category": "Café da Manhã",
+    "preparation_time": 15,
+    "servings": "1 unidade",
+    "instructions": "1. Bata o ovo com a água e o vinagre para tirar o cheiro.\n2. Acrescente o farelo de aveia, o fermento e os temperos. Misture bem.\n3. Asse em frigideira antiaderente levemente untada em fogo muito baixo, com a tampa fechada.\n4. Vire para dourar o outro lado.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Água", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Vinagre", "quantity": "3", "unit": "gotas"},
+      {"name": "Farelo de aveia", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher chá rasa"},
+      {"name": "Orégano", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Pão de Frango Proteico",
+    "category": "Fitness",
+    "preparation_time": 20,
+    "servings": "1 porção",
+    "instructions": "1. Bata tudo no liquidificador ou mixer.\n2. Leve para assar em frigideira antiaderente em fogo bem baixo com tampa, ou no microondas por 2:15 min.\n3. Se desejar, adicione gergelim para decorar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovos", "quantity": "2", "unit": "unid"},
+      {"name": "Frango cozido e desfiado", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher chá"},
+      {"name": "Psyllium (opcional)", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Pão de Cuscuz",
+    "category": "Café da Manhã",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Hidrate o flocão de milho na água.\n2. Acrescente o ovo batido, a aveia, o sal e o fermento. Misture.\n3. Asse em frigideira antiaderente pré-aquecida e untada, dourando dos dois lados.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Flocão de milho", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Farelo de aveia", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Água", "quantity": "0.25", "unit": "xícara"},
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Fermento químico", "quantity": "1", "unit": "colher café rasa"},
+      {"name": "Sal", "quantity": "1", "unit": "pitada"}
+    ]
+  },
+  {
+    "title": "Panqueca de Oleaginosa",
+    "category": "Lanches",
+    "preparation_time": 10,
+    "servings": "1 grande ou 4 pequenas",
+    "instructions": "1. Misture todos os ingredientes com um garfo.\n2. Asse em frigideira antiaderente pré-aquecida levemente untada.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Farinha de oleaginosa (castanha/linhaça)", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Farelo de aveia ou psyllium", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher café"}
+    ]
+  },
+  {
+    "title": "Cuscuz de Aveia",
+    "category": "Café da Manhã",
+    "preparation_time": 15,
+    "servings": "2 porções",
+    "instructions": "1. Hidrate o cuscuz e a aveia com a água e tempere com sal.\n2. Deixe descansar até dobrar de volume.\n3. Cozinhe na cuscuzeira até sentir o cheiro característico. Desenforme após alguns minutos.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Flocão de milho (cuscuz)", "quantity": "1", "unit": "xícara"},
+      {"name": "Farelo de aveia", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Água", "quantity": "2", "unit": "xícaras"},
+      {"name": "Sal", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Panqueca de Banana Fit",
+    "category": "Café da Manhã",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Amasse a banana com um garfo.\n2. Misture com o ovo, a aveia, a canela e o sal.\n3. Asse dos dois lados em frigideira antiaderente untada com óleo de coco.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Banana madura", "quantity": "1", "unit": "pequena"},
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Farelo de Aveia", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Canela", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Panqueca Low Carb",
+    "category": "Lanches",
+    "preparation_time": 15,
+    "servings": "1 unidade",
+    "instructions": "1. Bata o ovo com o vinagre. Misture com a farinha, cacau, canela e fermento.\n2. Asse em frigideira untada virando na metade do tempo.\n3. Opcional: cubra com chocolate 70% derretido.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Vinagre", "quantity": "1", "unit": "colher chá"},
+      {"name": "Farinha de oleaginosa", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Cacau em pó 100% (opcional)", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher chá"},
+      {"name": "Canela", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Pão de Arroz de Liquidificador",
+    "category": "Lanches",
+    "preparation_time": 50,
+    "servings": "1 bolo inglês",
+    "instructions": "1. Bata no liquidificador o arroz hidratado, ovos, óleo, leite e sal até ficar liso.\n2. Misture o fermento delicadamente.\n3. Asse em forma de bolo inglês untada a 180°C por 30-40 min.",
+    "additional_instructions": "O arroz deve ficar de molho por 3h em água quente ou 12h em água fria.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Arroz branco cru (hidratado)", "quantity": "2", "unit": "xícaras"},
+      {"name": "Ovos", "quantity": "4", "unit": "unid"},
+      {"name": "Óleo", "quantity": "125", "unit": "ml"},
+      {"name": "Leite", "quantity": "125", "unit": "ml"},
+      {"name": "Sal", "quantity": "1", "unit": "colher chá"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Patê Proteico",
+    "category": "Acompanhamentos",
+    "preparation_time": 10,
+    "servings": "1 pote",
+    "instructions": "1. Misture todos os ingredientes até formar uma pasta homogênea.\n2. Utilize para rechear sanduíches ou acompanhar torradas.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Frango desfiado (ou atum/sardinha)", "quantity": "100", "unit": "g"},
+      {"name": "Maionese light", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Cenoura ralada", "quantity": "1", "unit": "a gosto"},
+      {"name": "Milho e azeitona", "quantity": "1", "unit": "a gosto"},
+      {"name": "Cheiro verde", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Muffin Salgado",
+    "category": "Lanches",
+    "preparation_time": 40,
+    "servings": "12 unidades",
+    "instructions": "1. Bata no liquidificador: milho, ovos, azeite e sal.\n2. Misture a farinha até homogeneizar. Adicione o recheio e o fermento sem bater.\n3. Asse em forminhas a 180°C por 30 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Milho cozido", "quantity": "1", "unit": "lata"},
+      {"name": "Ovos", "quantity": "3", "unit": "unid"},
+      {"name": "Azeite", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Farelo de aveia", "quantity": "1", "unit": "xícara"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Recheio (frango/sardinha)", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Panqueca de Frango Rápida",
+    "category": "Jantar",
+    "preparation_time": 15,
+    "servings": "6 panquecas",
+    "instructions": "1. Misture os ovos, a goma e os temperos com um garfo.\n2. Asse discos finos em frigideira untada.\n3. Recheie com frango e cubra com molho de tomate.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovos", "quantity": "3", "unit": "unid"},
+      {"name": "Goma de tapioca", "quantity": "4", "unit": "colheres sopa"},
+      {"name": "Sal e temperos", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Panqueca de Batata Doce",
+    "category": "Lanches",
+    "preparation_time": 15,
+    "servings": "1 porção",
+    "instructions": "1. Bata o purê de batata doce com o ovo e a canela no liquidificador.\n2. Asse colheradas da massa em frigideira untada até dourar os lados.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Purê de batata doce", "quantity": "125", "unit": "g"},
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Canela em pó", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Mix de Fibras e Sementes",
+    "category": "Acompanhamentos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture todos os ingredientes e armazene em pote com tampa.\n2. Utilize 2 colheres de sopa junto à fruta no café da manhã.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Farelo de aveia", "quantity": "100", "unit": "g"},
+      {"name": "Psyllium", "quantity": "100", "unit": "g"},
+      {"name": "Farinha de linhaça dourada", "quantity": "100", "unit": "g"},
+      {"name": "Gergelim", "quantity": "50", "unit": "g"},
+      {"name": "Chia", "quantity": "50", "unit": "g"},
+      {"name": "Semente de girassol", "quantity": "50", "unit": "g"},
+      {"name": "Semente de abóbora", "quantity": "50", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Mix de Sementes e Frutas Secas",
+    "category": "Acompanhamentos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture todos os ingredientes e armazene em pote com tampa.\n2. Utilize 2 colheres de sopa junto à fruta no café da manhã.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Frutas secas (gojiberry, cranberry...)", "quantity": "200", "unit": "g"},
+      {"name": "Farinha de linhaça dourada", "quantity": "100", "unit": "g"},
+      {"name": "Gergelim", "quantity": "50", "unit": "g"},
+      {"name": "Coco seco sem açúcar", "quantity": "50", "unit": "g"},
+      {"name": "Chia", "quantity": "50", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Sal de Ervas",
+    "category": "Temperos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Leve tudo no processador com o azeite e bata por 10 segundos.\n2. Use para substituir o sal de cozinha e auxiliar no controle da pressão.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Sal grosso", "quantity": "200", "unit": "g"},
+      {"name": "Salsinha desidratada", "quantity": "1", "unit": "colher chá"},
+      {"name": "Cebolinha desidratada", "quantity": "1", "unit": "colher chá"},
+      {"name": "Orégano", "quantity": "1", "unit": "colher chá"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio"}
+    ]
+  },
+  {
+    "title": "Tostex de Batata Doce",
+    "category": "Lanches",
+    "preparation_time": 15,
+    "servings": "1 porção",
+    "instructions": "1. Misture a batata doce crua ralada com o queijo ralado.\n2. Espalhe em frigideira antiaderente pré-aquecida.\n3. Asse dos dois lados até ficar crocante. Recheie com frango e feche.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Batata doce crua ralada", "quantity": "70", "unit": "g"},
+      {"name": "Queijo ralado", "quantity": "40", "unit": "g"},
+      {"name": "Frango desfiado (opcional)", "quantity": "3", "unit": "colheres"}
+    ]
+  },
+  {
+    "title": "Tapinhame",
+    "category": "Café da Manhã",
+    "preparation_time": 5,
+    "servings": "1 unidade",
+    "instructions": "1. Espalhe o inhame ralado em uma frigideira antiaderente.\n2. Doure dos dois lados (cuidado para não queimar).\n3. Recheie a gosto (ex: frango, ovos).",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Inhame cru ralado", "quantity": "60", "unit": "g"},
+      {"name": "Sal", "quantity": "1", "unit": "pitada"}
+    ]
+  },
+  {
+    "title": "Panqueca de Inhame com Beterraba",
+    "category": "Almoço",
+    "preparation_time": 15,
+    "servings": "1 unidade",
+    "instructions": "1. Processe todos os ingredientes até ficar homogêneo.\n2. Asse em frigideira antiaderente untada.\n3. Recheie com queijo ou frango.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovos", "quantity": "2", "unit": "unid"},
+      {"name": "Inhame cozido", "quantity": "60", "unit": "g"},
+      {"name": "Beterraba", "quantity": "40", "unit": "g"},
+      {"name": "Sal", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Tostex de Macaxeira",
+    "category": "Lanches",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Misture a macaxeira amassada com o queijo e o sal.\n2. Asse no grill untado ou frigideira até dourar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Macaxeira cozida amassada", "quantity": "100", "unit": "g"},
+      {"name": "Queijo ralado (ralo grosso)", "quantity": "30", "unit": "g"},
+      {"name": "Sal", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Waffle de Macaxeira",
+    "category": "Lanches",
+    "preparation_time": 15,
+    "servings": "1 unidade",
+    "instructions": "1. Amasse a macaxeira até virar purê.\n2. Coloque na máquina de waffle untada e deixe assar até o ponto desejado (aprox. 15 min).",
+    "additional_instructions": "Quanto mais seca a macaxeira, mais crocante fica.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Macaxeira cozida", "quantity": "150", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Bolo de Banana e Aveia sem Açúcar",
+    "category": "Sobremesas",
+    "preparation_time": 45,
+    "servings": "12 porções",
+    "instructions": "1. Bata as claras em neve. Reserve.\n2. Bata no liquidificador: bananas, maçãs, gemas, passas e óleo.\n3. Em uma tigela, misture o creme com a aveia, canela e por último o fermento e claras em neve.\n4. Asse a 180°C por 30 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Bananas maduras", "quantity": "6", "unit": "unid"},
+      {"name": "Óleo de coco", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Ovos", "quantity": "4", "unit": "unid"},
+      {"name": "Farelo de aveia", "quantity": "2", "unit": "xícaras"},
+      {"name": "Uvas passas", "quantity": "200", "unit": "g"},
+      {"name": "Fermento químico", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Bolo de Chocolate na Caneca",
+    "category": "Sobremesas",
+    "preparation_time": 5,
+    "servings": "2 porções",
+    "instructions": "1. Na caneca, bata o ovo. Adicione cacau, banana amassada, coco/aveia e óleo.\n2. Misture bem e adicione o fermento.\n3. Microondas por 2:30 a 3 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Cacau em pó 100%", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Banana madura amassada", "quantity": "1", "unit": "unid"},
+      {"name": "Coco ralado ou farelo de aveia", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Óleo de coco", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher café"}
+    ]
+  },
+  {
+    "title": "Brigadeiro Low FODMAP",
+    "category": "Sobremesas",
+    "preparation_time": 20,
+    "servings": "10 docinhos",
+    "instructions": "1. Processe o coco, manteiga, cacau, néctar e baunilha até virar massa.\n2. Modele bolinhas e congele por 10 min.\n3. Derreta o chocolate com leite de coco e banhe as bolinhas.\n4. Volte ao congelador até endurecer.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Coco ralado sem açúcar", "quantity": "100", "unit": "g"},
+      {"name": "Manteiga Ghee", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Néctar de coco", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Cacau 100%", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Chocolate 80%", "quantity": "90", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Leite de Grão de Bico",
+    "category": "Bebidas",
+    "preparation_time": 30,
+    "servings": "1 litro",
+    "instructions": "1. Deixe o grão de molho por 12h. Escorra.\n2. Bata no liquidificador com 1 litro de água.\n3. Coe e leve ao fogo por 5 a 20 min mexendo sempre.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Grão de bico", "quantity": "200", "unit": "g"},
+      {"name": "Água", "quantity": "1", "unit": "Litro"}
+    ]
+  },
+  {
+    "title": "Leite de Aveia",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "1 Litro",
+    "instructions": "1. Deixe aveia de molho por 6h. Escorra.\n2. Bata com água fervente e coe.\n3. Bata novamente com a água quente, sal e baunilha.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Aveia em flocos", "quantity": "1", "unit": "xícara"},
+      {"name": "Água fervente", "quantity": "2", "unit": "xícaras"},
+      {"name": "Água quente", "quantity": "2", "unit": "xícaras"}
+    ]
+  },
+  {
+    "title": "Leite de Coco Caseiro",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "600ml",
+    "instructions": "1. Bata o coco seco com a água fervente no liquidificador por 3 a 5 minutos.\n2. Coe em uma peneira fina ou pano de voal.\n3. Armazene na geladeira. O resíduo pode virar farinha de coco.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Coco seco", "quantity": "3", "unit": "xícaras"},
+      {"name": "Água fervente", "quantity": "600", "unit": "ml"}
+    ]
+  },
+  {
+    "title": "Leite de Arroz",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "600ml",
+    "instructions": "1. Deixe o arroz de molho por 6h. Escorra.\n2. Bata com água fervente, sal e baunilha.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Arroz cru", "quantity": "1", "unit": "xícara"},
+      {"name": "Água fervente", "quantity": "600", "unit": "ml"}
+    ]
+  },
+  {
+    "title": "Leite de Castanha de Caju",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "700ml",
+    "instructions": "1. Deixe castanhas de molho por 8h. Escorra.\n2. Bata com água nova por 3 min. Não precisa coar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Castanha de caju crua", "quantity": "300", "unit": "g"},
+      {"name": "Água", "quantity": "700", "unit": "ml"}
+    ]
+  },
+  {
+    "title": "Requeijão de Castanha de Caju",
+    "category": "Acompanhamentos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Processe as castanhas hidratadas com água/leite, limão, azeite e temperos até ficar cremoso.\n2. Gele para encorpar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Castanha de caju crua", "quantity": "200", "unit": "g"},
+      {"name": "Leite vegetal ou água", "quantity": "200", "unit": "ml"},
+      {"name": "Limão (suco)", "quantity": "1", "unit": "colher chá"},
+      {"name": "Azeite", "quantity": "20", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Guacamole",
+    "category": "Acompanhamentos",
+    "preparation_time": 10,
+    "servings": "1 pote",
+    "instructions": "1. Amasse o abacate com um garfo.\n2. Acrescente limão, coentro, hortelã, sal, pimenta e tomate. Misture.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Abacate", "quantity": "1", "unit": "unid"},
+      {"name": "Limão", "quantity": "1", "unit": "unid"},
+      {"name": "Tomate picado", "quantity": "1", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Homus de Grão de Bico",
+    "category": "Acompanhamentos",
+    "preparation_time": 15,
+    "servings": "1 pote",
+    "instructions": "1. Asse a cabeça de alho com azeite até virar pasta.\n2. Bata no liquidificador o grão de bico, tahine, pasta de alho, caldo e azeite.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Grão de bico cozido", "quantity": "2", "unit": "xícaras"},
+      {"name": "Tahine", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Alho (cabeça)", "quantity": "1", "unit": "unid"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio"}
+    ]
+  },
+  {
+    "title": "Tahine Caseiro",
+    "category": "Molhos",
+    "preparation_time": 15,
+    "servings": "1 pote",
+    "instructions": "1. Torre levemente o gergelim.\n2. Processe até liberar o óleo e virar uma pasta.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Sementes de gergelim", "quantity": "500", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Cracker de Sementes",
+    "category": "Lanches",
+    "preparation_time": 40,
+    "servings": "1 fornada",
+    "instructions": "1. Misture todos os ingredientes até formar massa consistente.\n2. Espalhe bem fino em forma untada.\n3. Asse por 30-40 min até ficar crocante.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Farinha de linhaça dourada", "quantity": "1", "unit": "xícara"},
+      {"name": "Gergelim", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Linhaça escura", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Chia", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Água", "quantity": "0.5", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Pudim de Chia",
+    "category": "Sobremesas",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture o leite com a chia.\n2. Deixe na geladeira da noite para o dia.\n3. Sirva com frutas.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Leite vegetal", "quantity": "1", "unit": "xícara"},
+      {"name": "Semente de chia", "quantity": "3", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Granola Funcional",
+    "category": "Café da Manhã",
+    "preparation_time": 40,
+    "servings": "1 pote grande",
+    "instructions": "1. Misture os secos. Ferva a calda (óleo, açúcar de coco, mel).\n2. Despeje calda nos secos. Asse por 15 min, mexa, asse mais 10 min.\n3. Adicione frutas secas e asse mais 10 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Farelo de aveia", "quantity": "2.5", "unit": "xícaras"},
+      {"name": "Quinoa em flocos", "quantity": "2.5", "unit": "xícaras"},
+      {"name": "Oleaginosas", "quantity": "1", "unit": "xícara"},
+      {"name": "Óleo de coco", "quantity": "6", "unit": "colheres sopa"},
+      {"name": "Néctar de coco", "quantity": "6", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Leite com Chocolate",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "1 copo",
+    "instructions": "1. Bata tudo no liquidificador.\n2. Leve ao fogo para engrossar. Sirva quente ou gelado.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Leite vegetal", "quantity": "200", "unit": "ml"},
+      {"name": "Farinha de aveia", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Cacau 100%", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Chocolate 70%", "quantity": "20", "unit": "g"}
+    ]
+  },
+  {
+    "title": "Queijo de Grão de Bico",
+    "category": "Vegano",
+    "preparation_time": 25,
+    "servings": "1 queijo",
+    "instructions": "1. Bata grão de bico hidratado com água. Coe (o resíduo é farinha).\n2. Leve o líquido ao fogo com azeite, sal e temperos mexendo até virar um mingau grosso (15-20 min).\n3. Enforme e gele.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Grão de bico seco", "quantity": "1", "unit": "xícara"},
+      {"name": "Água", "quantity": "2.5", "unit": "xícaras"},
+      {"name": "Azeite", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Levedura nutricional (opcional)", "quantity": "2", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Queijo de Aveia",
+    "category": "Vegano",
+    "preparation_time": 15,
+    "servings": "1 queijo",
+    "instructions": "1. Faça leite de aveia (bata e coe).\n2. Misture o leite com azeite, polvilho e temperos.\n3. Cozinhe mexendo até ficar puxa-puxa.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Leite de aveia caseiro", "quantity": "1", "unit": "xícara"},
+      {"name": "Azeite", "quantity": "0.25", "unit": "xícara"},
+      {"name": "Polvilho azedo", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Levedura nutricional", "quantity": "3", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Mussarela de Corte Vegana",
+    "category": "Vegano",
+    "preparation_time": 30,
+    "servings": "1 queijo",
+    "instructions": "1. Bata mandioca, leite, polvilho, amido e temperos.\n2. Cozinhe até virar massa grudenta.\n3. Incorpore o azeite aos poucos fora do fogo. Enforme e gele por 24h.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Mandioca cozida", "quantity": "1", "unit": "xícara"},
+      {"name": "Leite vegetal", "quantity": "200", "unit": "ml"},
+      {"name": "Polvilho", "quantity": "6", "unit": "colheres sopa"},
+      {"name": "Azeite", "quantity": "50", "unit": "ml"}
+    ]
+  },
+  {
+    "title": "Tofu Caseiro",
+    "category": "Vegano",
+    "preparation_time": 40,
+    "servings": "1 bloco",
+    "instructions": "1. Faça leite de soja (bata e coe grãos hidratados).\n2. Ferva o leite. Desligue e adicione limão para talhar.\n3. Coe em pano fino e prense no molde por 1h.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Grãos de soja", "quantity": "2", "unit": "xícaras"},
+      {"name": "Água", "quantity": "8", "unit": "xícaras"},
+      {"name": "Limão (suco)", "quantity": "5", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Filé de Frango Empanado Fit",
+    "category": "Almoço",
+    "preparation_time": 30,
+    "servings": "4 porções",
+    "instructions": "1. Tempere os filés.\n2. Empane no flocão de milho apertando bem.\n3. Asse em frigideira untada em fogo baixo até dourar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Filé de frango", "quantity": "1", "unit": "kg"},
+      {"name": "Flocão de milho", "quantity": "1", "unit": "xícara"},
+      {"name": "Temperos", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Frango à Parmegiana Fit",
+    "category": "Almoço",
+    "preparation_time": 40,
+    "servings": "4 porções",
+    "instructions": "1. Prepare o frango empanado (receita anterior).\n2. Cubra com passata de tomate e queijo.\n3. Tampe a frigideira para derreter.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Frango empanado fit", "quantity": "4", "unit": "unid"},
+      {"name": "Passata de tomate", "quantity": "1", "unit": "xícara"},
+      {"name": "Queijo", "quantity": "4", "unit": "fatias"}
+    ]
+  },
+  {
+    "title": "Nuggets de Frango Caseiro",
+    "category": "Lanches",
+    "preparation_time": 30,
+    "servings": "20 unidades",
+    "instructions": "1. Processe frango e temperos até virar massa.\n2. Modele, passe no flocão e congele ou asse no Airfryer/Forno.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Peito de frango em cubos", "quantity": "1", "unit": "kg"},
+      {"name": "Cebola e alho", "quantity": "1", "unit": "a gosto"},
+      {"name": "Flocão de milho (para empanar)", "quantity": "1", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Hambúrguer de Carne Funcional",
+    "category": "Jantar",
+    "preparation_time": 20,
+    "servings": "4 unidades",
+    "instructions": "1. Misture carne, ovo, linhaça e vegetais.\n2. Molde e grelhe em frigideira untada.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Patinho moído", "quantity": "400", "unit": "g"},
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Farinha de linhaça", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Almôndegas de Carne",
+    "category": "Almoço",
+    "preparation_time": 40,
+    "servings": "4 porções",
+    "instructions": "1. Prepare a massa da carne (igual hambúrguer).\n2. Asse as bolinhas no forno por 35 min.\n3. Ferva no molho de tomate.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Massa de carne funcional", "quantity": "1", "unit": "receita"},
+      {"name": "Molho de tomate", "quantity": "1", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Hambúrguer de Arroz e Feijão",
+    "category": "Vegano",
+    "preparation_time": 30,
+    "servings": "6 mini",
+    "instructions": "1. Processe feijão e beterraba.\n2. Misture com quinoa, farinha e temperos.\n3. Molde e grelhe.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Feijão pronto", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Quinoa cozida", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Farinha de arroz integral", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Beterraba cozida", "quantity": "0.5", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Iogurte Vegano de Coco",
+    "category": "Vegano",
+    "preparation_time": 10,
+    "servings": "1 pote",
+    "instructions": "1. Bata polpa de coco verde com pouca água de coco até virar creme grosso.\n2. Deixe fermentar fora da geladeira por 4-6h.\n3. Gele.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Polpa de coco verde grossa", "quantity": "3", "unit": "unid"},
+      {"name": "Água de coco", "quantity": "0.25", "unit": "xícara"},
+      {"name": "Limão (suco)", "quantity": "1", "unit": "limão"}
+    ]
+  },
+  {
+    "title": "Pudim de Iogurte",
+    "category": "Café da Manhã",
+    "preparation_time": 10,
+    "servings": "1 pote",
+    "instructions": "1. Hidrate metade do iogurte com aveia e metade com chia.\n2. Monte camadas com frutas no pote. Gele.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Iogurte", "quantity": "1", "unit": "copo"},
+      {"name": "Farelo de aveia", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Chia", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Fruta picada", "quantity": "1", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Iogurte Vegano de Morango",
+    "category": "Vegano",
+    "preparation_time": 15,
+    "servings": "1 pote",
+    "instructions": "1. Bata tudo, ferva por 2 min mexendo.\n2. Gele. Bata novamente antes de servir.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Leite vegetal", "quantity": "2", "unit": "xícaras"},
+      {"name": "Morangos", "quantity": "200", "unit": "g"},
+      {"name": "Goma de tapioca", "quantity": "2", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Requeijão Caseiro de Ricota",
+    "category": "Acompanhamentos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Bata ricota, leite fervente e manteiga no liquidificador.\n2. Conserve na geladeira.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ricota", "quantity": "1", "unit": "unid"},
+      {"name": "Leite fervente", "quantity": "350", "unit": "ml"},
+      {"name": "Manteiga", "quantity": "2", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Molho Branco de Inhame",
+    "category": "Molhos",
+    "preparation_time": 20,
+    "servings": "1 pote",
+    "instructions": "1. Bata inhame cozido com água/leite.\n2. Refogue alho e cebola, adicione o creme e tempere.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Inhame cozido", "quantity": "1", "unit": "grande"},
+      {"name": "Leite de coco (opcional)", "quantity": "100", "unit": "ml"},
+      {"name": "Alho e cebola", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Molho Branco de Castanha",
+    "category": "Molhos",
+    "preparation_time": 10,
+    "servings": "1 pote",
+    "instructions": "1. Bata castanhas hidratadas com água e temperos.\n2. Aqueça na panela com refogado de alho/cebola.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Castanha de caju crua", "quantity": "2", "unit": "xícaras"},
+      {"name": "Água", "quantity": "2", "unit": "xícaras"},
+      {"name": "Levedura nutricional", "quantity": "2", "unit": "colheres sopa"}
+    ]
+  },
+  {
+    "title": "Omelete Sabor Pizza",
+    "category": "Jantar",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Bata ovos e coloque na frigideira.\n2. Recheie com queijo, tomate e orégano. Dobre.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovos", "quantity": "2", "unit": "unid"},
+      {"name": "Queijo", "quantity": "1", "unit": "fatia"},
+      {"name": "Tomate e orégano", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Waffle Doce de Banana",
+    "category": "Café da Manhã",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Misture banana, aveia, ovo, canela.\n2. Asse na máquina de waffle untada.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Banana madura", "quantity": "1", "unit": "unid"},
+      {"name": "Farelo de aveia", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Ovo", "quantity": "1", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Waffle de Queijo",
+    "category": "Café da Manhã",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Misture ovo, goma, requeijão e queijo.\n2. Asse na máquina de waffle.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Goma de tapioca", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Requeijão", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Queijo ralado", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Pão de Queijo de Frigideira",
+    "category": "Café da Manhã",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Bata ovo, adicione goma, requeijão e queijo.\n2. Asse em frigideira virando os lados.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Goma de tapioca", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Requeijão", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Queijo picado", "quantity": "1", "unit": "fatia"}
+    ]
+  },
+  {
+    "title": "Pizza de Couve-Flor",
+    "category": "Jantar",
+    "preparation_time": 40,
+    "servings": "2 pizzas",
+    "instructions": "1. Processe couve-flor, misture com queijo e ovos.\n2. Asse a massa por 20 min.\n3. Recheie e gratine.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Couve-flor processada", "quantity": "4", "unit": "xícaras"},
+      {"name": "Queijo ralado", "quantity": "2", "unit": "xícaras"},
+      {"name": "Ovos", "quantity": "3", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Massa de Pizza Proteica de Frango",
+    "category": "Jantar",
+    "preparation_time": 30,
+    "servings": "1 pizza",
+    "instructions": "1. Processe frango, couve-flor e ovos.\n2. Espalhe em forma untada e asse.\n3. Recheie.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Frango cozido", "quantity": "300", "unit": "g"},
+      {"name": "Couve-flor cozida", "quantity": "0.5", "unit": "unid"},
+      {"name": "Ovos", "quantity": "2", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Açaí Funcional",
+    "category": "Sobremesas",
+    "preparation_time": 5,
+    "servings": "1 tigela",
+    "instructions": "1. Bata açaí, abobrinha congelada (dá volume sem sabor) e banana no processador até virar creme.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Polpa de açaí puro", "quantity": "100", "unit": "g"},
+      {"name": "Abobrinha congelada em cubos", "quantity": "75", "unit": "g"},
+      {"name": "Banana congelada", "quantity": "1", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Suco Verde Detox",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "1 copo",
+    "instructions": "1. Higienize todos os ingredientes.\n2. Bata tudo no liquidificador com a água de coco.\n3. Coe se preferir (mas sem coar aproveita-se mais fibras) e beba imediatamente.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Maçã verde", "quantity": "1", "unit": "unid"},
+      {"name": "Limão (suco)", "quantity": "1", "unit": "unid"},
+      {"name": "Kiwi", "quantity": "1", "unit": "unid"},
+      {"name": "Hortelã", "quantity": "1", "unit": "punhado"},
+      {"name": "Água de coco", "quantity": "120", "unit": "ml"}
+    ]
+  },
+  {
+    "title": "Suco de Manga com Maracujá",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "2 copos",
+    "instructions": "1. Bata a polpa do maracujá no modo pulsar para soltar as sementes e coe.\n2. Bata o suco do maracujá com a manga e as passas.\n3. Sirva gelado.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Manga", "quantity": "1.5", "unit": "unid"},
+      {"name": "Maracujá (polpa)", "quantity": "1", "unit": "unid"},
+      {"name": "Uvas passas brancas", "quantity": "5", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Chá de Hibisco com Canela",
+    "category": "Bebidas",
+    "preparation_time": 15,
+    "servings": "500ml",
+    "instructions": "1. Ferva a água com o pau de canela.\n2. Desligue o fogo e adicione o hibisco.\n3. Tampe e deixe em infusão por 10 minutos.\n4. Coe e beba (ajuda na retenção de líquidos).",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Hibisco seco", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Canela em pau", "quantity": "1", "unit": "unid"},
+      {"name": "Água", "quantity": "500", "unit": "ml"}
+    ]
+  },
+  {
+    "title": "Molho de Mostarda e Mel",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote pequeno",
+    "instructions": "1. Misture todos os ingredientes em uma tigela pequena até ficar homogêneo.\n2. Conserve na geladeira em pote de vidro fechado.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Mostarda", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Azeite", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Vinagre de maçã", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Mel", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Sal", "quantity": "1", "unit": "pitada"}
+    ]
+  },
+  {
+    "title": "Maionese de Abacate",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture tudo com um mixer ou liquidificador até ficar um creme homogêneo.\n2. Use como substituto saudável da maionese tradicional.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Avocado", "quantity": "0.5", "unit": "unid"},
+      {"name": "Limão (suco)", "quantity": "0.5", "unit": "unid"},
+      {"name": "Mostarda", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Sal", "quantity": "1", "unit": "a gosto"},
+      {"name": "Ervas", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Abobrinha Recheada",
+    "category": "Almoço",
+    "preparation_time": 45,
+    "servings": "2 porções",
+    "instructions": "1. Corte as abobrinhas ao meio e remova a polpa.\n2. Asse as barcas por 20 min em forno pré-aquecido.\n3. Recheie com quinoa refogada ou frango desfiado.\n4. Volte ao forno por mais 20 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Abobrinha Italiana", "quantity": "2", "unit": "unid"},
+      {"name": "Quinoa ou Frango", "quantity": "1", "unit": "xícara"},
+      {"name": "Sal de ervas", "quantity": "1", "unit": "a gosto"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio"}
+    ]
+  },
+  {
+    "title": "Pizza de Frigideira Fit",
+    "category": "Jantar",
+    "preparation_time": 15,
+    "servings": "1 pizza brotinho",
+    "instructions": "1. Bata o ovo (com um pingo de vinagre para tirar cheiro) e misture com a aveia e fermento.\n2. Despeje em frigideira untada em fogo baixo. Tampe.\n3. Vire, adicione molho de tomate, queijo e orégano.\n4. Abafe até o queijo derreter.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovo", "quantity": "1", "unit": "unid"},
+      {"name": "Farelo de aveia", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Fermento em pó", "quantity": "1", "unit": "colher chá"},
+      {"name": "Queijo", "quantity": "2", "unit": "fatias"},
+      {"name": "Molho de tomate", "quantity": "1", "unit": "colher"}
+    ]
+  },
+  {
+    "title": "Chips de Batata Doce (Tostex)",
+    "category": "Lanches",
+    "preparation_time": 15,
+    "servings": "1 porção",
+    "instructions": "1. Misture a batata doce crua ralada com o queijo ralado.\n2. Espalhe em frigideira antiaderente pré-aquecida.\n3. Asse dos dois lados até ficar crocante.\n4. Recheie com frango se desejar e feche.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Batata doce crua ralada", "quantity": "70", "unit": "g"},
+      {"name": "Queijo ralado", "quantity": "40", "unit": "g"},
+      {"name": "Frango desfiado (opcional)", "quantity": "3", "unit": "colheres"}
+    ]
+  },
+  {
+    "title": "Creme de Ricota com Ervas",
+    "category": "Acompanhamentos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Bata todos os ingredientes no processador até ficar cremoso.\n2. Ajuste o sal e as ervas conforme preferência.\n3. Ótimo para passar em pães ou torradas.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ricota", "quantity": "200", "unit": "g"},
+      {"name": "Iogurte natural", "quantity": "100", "unit": "ml"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio"},
+      {"name": "Ervas desidratadas", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Omelete de Forno de Legumes",
+    "category": "Jantar",
+    "preparation_time": 25,
+    "servings": "1 porção",
+    "instructions": "1. Bata os ovos com sal e orégano.\n2. Misture os legumes picados.\n3. Leve ao forno ou airfryer em forminhas de silicone por 15-20 min a 180°C.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Ovos", "quantity": "2", "unit": "unid"},
+      {"name": "Cenoura ralada", "quantity": "1", "unit": "colher"},
+      {"name": "Abobrinha picada", "quantity": "1", "unit": "colher"},
+      {"name": "Espinafre", "quantity": "1", "unit": "punhado"}
+    ]
+  },
+  {
+    "title": "Sorvete de Banana e Frutas Vermelhas",
+    "category": "Sobremesas",
+    "preparation_time": 5,
+    "servings": "2 porções",
+    "instructions": "1. Congele as bananas em rodelas.\n2. Bata as bananas congeladas com as frutas vermelhas no processador até virar um creme homogêneo.\n3. Sirva imediatamente.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Banana madura congelada", "quantity": "3", "unit": "unid"},
+      {"name": "Frutas vermelhas congeladas", "quantity": "1", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Farofa Funcional de Sementes",
+    "category": "Acompanhamentos",
+    "preparation_time": 15,
+    "servings": "1 pote",
+    "instructions": "1. Torre levemente as sementes na frigideira.\n2. Refogue cebola e alho no azeite.\n3. Misture as sementes, a farinha de aveia e tempere com sal e cúrcuma.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Semente de girassol", "quantity": "2", "unit": "colheres"},
+      {"name": "Semente de abóbora", "quantity": "2", "unit": "colheres"},
+      {"name": "Gergelim", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Farelo de aveia", "quantity": "1", "unit": "xícara"},
+      {"name": "Cebola roxa", "quantity": "2", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Suchá de Maçã com Chá Verde",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "1 copo",
+    "instructions": "1. Faça a infusão do chá verde. Coe.\n2. Bata o chá com maçã, mel e gelo no liquidificador.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Chá verde", "quantity": "1", "unit": "colher sobremesa"},
+      {"name": "Maçã", "quantity": "0.5", "unit": "unid"},
+      {"name": "Mel", "quantity": "1", "unit": "colher chá"}
+    ]
+  },
+  {
+    "title": "Suchá de Erva Doce com Abacaxi",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "1 copo",
+    "instructions": "1. Faça a infusão de erva doce. Coe.\n2. Bata com abacaxi e hortelã.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Erva doce", "quantity": "1", "unit": "colher chá"},
+      {"name": "Abacaxi", "quantity": "1", "unit": "fatia"},
+      {"name": "Hortelã", "quantity": "1", "unit": "punhado"}
+    ]
+  },
+  {
+    "title": "Suchá de Maracujá com Camomila",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "1 copo",
+    "instructions": "1. Bata maracujá (pulsar) e coe.\n2. Faça infusão de camomila e melissa.\n3. Misture tudo.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Maracujá", "quantity": "1", "unit": "unid"},
+      {"name": "Camomila", "quantity": "1", "unit": "colher chá"},
+      {"name": "Melissa", "quantity": "1", "unit": "colher chá"}
+    ]
+  },
+  {
+    "title": "Chá de Abacaxi com Gengibre",
+    "category": "Bebidas",
+    "preparation_time": 15,
+    "servings": "1 litro",
+    "instructions": "1. Ferva cascas de abacaxi, laranja e gengibre.\n2. Desligue, adicione carqueja e abafe.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Casca de abacaxi", "quantity": "1", "unit": "unid"},
+      {"name": "Casca de laranja", "quantity": "1", "unit": "unid"},
+      {"name": "Gengibre", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Carqueja", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Chá Verde com Amora",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "1 xícara",
+    "instructions": "1. Adicione ervas na água fervente (fogo desligado).\n2. Abafe por 10 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Folha de amora", "quantity": "1", "unit": "colher chá"},
+      {"name": "Chá verde", "quantity": "1", "unit": "colher chá"}
+    ]
+  },
+  {
+    "title": "Chá de Cúrcuma com Limão",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "1 xícara",
+    "instructions": "1. Misture cúrcuma na água quente.\n2. Adicione limão antes de beber.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Cúrcuma", "quantity": "1", "unit": "colher café"},
+      {"name": "Limão", "quantity": "1", "unit": "colher"}
+    ]
+  },
+  {
+    "title": "Molho Francês para Salada",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Bata tudo com garfo ou fouet até emulsionar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Limão", "quantity": "1", "unit": "unid"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio generoso"},
+      {"name": "Sal e Pimenta", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Vinagrete de Balsâmico",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture em vidro com tampa e chacoalhe bem.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Azeite", "quantity": "0.25", "unit": "xícara"},
+      {"name": "Vinagre balsâmico", "quantity": "3", "unit": "colheres sopa"},
+      {"name": "Sal", "quantity": "1", "unit": "pitada"}
+    ]
+  },
+  {
+    "title": "Molho de Laranja Tai",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Bata tudo no liquidificador.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Laranja (suco)", "quantity": "3", "unit": "unid"},
+      {"name": "Azeite", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Gengibre", "quantity": "1", "unit": "rodela"},
+      {"name": "Pimenta dedo de moça", "quantity": "1", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Molho Caesar Saudável",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture vigorosamente até ficar homogêneo.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Iogurte natural", "quantity": "0.5", "unit": "xícara"},
+      {"name": "Azeite", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Mostarda", "quantity": "1", "unit": "colher sopa"},
+      {"name": "Alho", "quantity": "1", "unit": "dente"}
+    ]
+  },
+  {
+    "title": "Molho de Iogurte com Ervas",
+    "category": "Molhos",
+    "preparation_time": 5,
+    "servings": "1 pote",
+    "instructions": "1. Misture iogurte, limão e ervas.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Iogurte natural", "quantity": "1", "unit": "copo"},
+      {"name": "Limão", "quantity": "0.5", "unit": "unid"},
+      {"name": "Ervas frescas", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Berinjela Empanada de Forno",
+    "category": "Almoço",
+    "preparation_time": 40,
+    "servings": "2 porções",
+    "instructions": "1. Deixe berinjela de molho em água e sal.\n2. Passe no ovo e na farinha de linhaça.\n3. Asse a 200C por 40 min.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Berinjela", "quantity": "2", "unit": "unid"},
+      {"name": "Ovo", "quantity": "2", "unit": "unid"},
+      {"name": "Farinha de linhaça", "quantity": "1", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Consumê de Chuchu",
+    "category": "Jantar",
+    "preparation_time": 30,
+    "servings": "2 porções",
+    "instructions": "1. Refogue frango e chuchu.\n2. Cozinhe chuchu até amaciar. Bata chuchu com amido.\n3. Volte para panela com frango até engrossar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Chuchu", "quantity": "4", "unit": "unid"},
+      {"name": "Frango em cubos", "quantity": "0.5", "unit": "peito"},
+      {"name": "Amido de milho", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Creme de Couve-Flor",
+    "category": "Jantar",
+    "preparation_time": 20,
+    "servings": "2 porções",
+    "instructions": "1. Refogue vegetais. Cozinhe com água.\n2. Bata no liquidificador. Volte ao fogo para apurar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Couve-flor", "quantity": "1", "unit": "unid"},
+      {"name": "Chuchu", "quantity": "2", "unit": "unid"},
+      {"name": "Alho poró", "quantity": "0.5", "unit": "talo"}
+    ]
+  },
+  {
+    "title": "Sopa de Jerimum",
+    "category": "Jantar",
+    "preparation_time": 25,
+    "servings": "2 porções",
+    "instructions": "1. Refogue e cozinhe jerimum até desmanchar.\n2. Bata com frango já cozido.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Jerimum", "quantity": "3", "unit": "xícaras"},
+      {"name": "Frango desfiado", "quantity": "1", "unit": "xícara"}
+    ]
+  },
+  {
+    "title": "Purê de Batata Sem Leite",
+    "category": "Acompanhamentos",
+    "preparation_time": 20,
+    "servings": "2 porções",
+    "instructions": "1. Cozinhe batata. Reserve água.\n2. Amasse batata com azeite e água do cozimento.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Batata", "quantity": "2", "unit": "unid"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio"}
+    ]
+  },
+  {
+    "title": "Burrito de Frango (na Couve)",
+    "category": "Jantar",
+    "preparation_time": 10,
+    "servings": "1 unidade",
+    "instructions": "1. Use folha de couve crua como massa.\n2. Recheie e enrole bem apertado.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Folha de couve", "quantity": "1", "unit": "grande"},
+      {"name": "Frango desfiado", "quantity": "100", "unit": "g"},
+      {"name": "Tahine", "quantity": "1", "unit": "colher sopa"}
+    ]
+  },
+  {
+    "title": "Arroz de Couve-Flor (Falso Arroz)",
+    "category": "Acompanhamentos",
+    "preparation_time": 10,
+    "servings": "2 porções",
+    "instructions": "1. Triture couve-flor crua.\n2. Refogue com temperos por 5 min (sem água).",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Couve-flor", "quantity": "1", "unit": "cabeça"},
+      {"name": "Cebola e alho", "quantity": "1", "unit": "a gosto"}
+    ]
+  },
+  {
+    "title": "Macarrão de Abobrinha",
+    "category": "Acompanhamentos",
+    "preparation_time": 5,
+    "servings": "1 porção",
+    "instructions": "1. Fatie abobrinha em tiras finas.\n2. Refogue rapidamente (3 min) no azeite.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Abobrinha", "quantity": "1", "unit": "unid"},
+      {"name": "Azeite", "quantity": "1", "unit": "fio"}
+    ]
+  },
+  {
+    "title": "Suco de Mamão e Laranja",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "1 copo",
+    "instructions": "1. Bata tudo e beba sem coar.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Mamão", "quantity": "0.25", "unit": "unid"},
+      {"name": "Laranja (suco)", "quantity": "2", "unit": "unid"},
+      {"name": "Linhaça", "quantity": "1", "unit": "colher chá"}
+    ]
+  },
+  {
+    "title": "Suco de Melão com Kiwi",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "1 copo",
+    "instructions": "1. Bata tudo e beba.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Melão", "quantity": "1", "unit": "fatia"},
+      {"name": "Kiwi", "quantity": "1", "unit": "unid"},
+      {"name": "Hortelã", "quantity": "1", "unit": "punhado"}
+    ]
+  },
+  {
+    "title": "Suco de Acerola com Laranja",
+    "category": "Bebidas",
+    "preparation_time": 5,
+    "servings": "1 copo",
+    "instructions": "1. Bata, coe e beba.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Acerola", "quantity": "10", "unit": "unid"},
+      {"name": "Laranja (suco)", "quantity": "2", "unit": "unid"}
+    ]
+  },
+  {
+    "title": "Suco de Goji Berry",
+    "category": "Bebidas",
+    "preparation_time": 10,
+    "servings": "1 copo",
+    "instructions": "1. Hidrate goji na água por 10 min.\n2. Bata com limão e morangos.",
+    "source": "Nutri Alexandra Motta",
+    "ingredients": [
+      {"name": "Goji Berry", "quantity": "2", "unit": "colheres sopa"},
+      {"name": "Limão", "quantity": "1", "unit": "unid"},
+      {"name": "Morango", "quantity": "4", "unit": "unid"}
+    ]
+  }
+]

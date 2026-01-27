@@ -1,7 +1,8 @@
+# ARQUIVO: src/utils/theme.py
 import flet as ft
 
 # =================================================================================
-# PALETAS DE CORES (FLET 0.80+ / Material 3)
+# PALETAS DE CORES
 # =================================================================================
 
 # Tema Claro

@@ -3,6 +3,7 @@
 import flet as ft
 import traceback
 from src.database.database import init_database
+from src.database.seeder import seed_native_recipes
 from src.core.logger import get_logger
 from src.utils.theme import AppThemes
 
@@ -13,6 +14,7 @@ from src.views.dashboard_view import DashboardView
 from src.views.category_view import CategoryView
 from src.views.recipe_create_view import RecipeCreateView
 from src.views.recipe_list_view import RecipeListView
+from src.views.recipe_detail_view import RecipeDetailView
 
 logger = get_logger("main")
 
@@ -44,6 +46,8 @@ def main(page: ft.Page):
     try:
         logger.info("=== INICIANDO APLICAÇÃO (MILITARY GRADE) ===")
         init_database()
+        # Carrega as receitas do JSON para o banco ao iniciar
+        seed_native_recipes(user_id=1)
 
         # 2. Configurações da Janela
         page.title = "Guia Mestre de Receitas"
@@ -90,6 +94,9 @@ def main(page: ft.Page):
 
                 elif page.route == "/create_recipe":
                     page.views.append(RecipeCreateView(page))
+                    
+                elif page.route == "/recipe_detail":
+                    page.views.append(RecipeDetailView(page))
 
                 page.update()
 

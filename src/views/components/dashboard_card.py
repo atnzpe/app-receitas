@@ -1,59 +1,53 @@
+# ARQUIVO: src/views/components/dashboard_card.py
 import flet as ft
-from typing import Callable
-from src.utils.theme import AppDimensions, AppFonts
 
 
-class DashboardCard(ft.Card):
-    def __init__(
-        self,
-        icon_name: str,
-        title: str,
-        subtitle: str,
-        color_scheme: dict,
-        on_card_click: Callable
-    ):
-        # Extração segura de cores (evita passar dicionário para o controle)
-        fg_color = color_scheme.get("fg_light", ft.Colors.BLACK)
-        bg_color = color_scheme.get("bg_light", ft.Colors.WHITE)
+def DashboardCard(icon: str, title: str, description: str, color: str, on_click):
+    """
+    Componente de Card Responsivo.
+    """
+    return ft.Card(
+        elevation=2,
+        # [CORREÇÃO] Removido surface_tint_color para compatibilidade
+        # Se quiser dar um tom de cor, podemos usar o Container interno, mas o padrão é mais seguro.
 
-        icon_container = ft.Container(
-            content=ft.Icon(
-                icon_name,  # POSICIONAL: Funciona independente se o parâmetro chama 'name' ou 'value'
-                size=AppDimensions.ICON_SIZE_MEDIUM,
-                color=fg_color,
+        # Container define o padding e clique, mas SEM height fixo
+        content=ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Container(
+                        # Ícone como argumento posicional (sem 'name=')
+                        content=ft.Icon(icon, size=40, color=color),
+                        # Uso explícito de ft.Alignment(0, 0)
+                        alignment=ft.Alignment(0, 0),
+                        padding=ft.padding.only(bottom=10)
+                    ),
+                    ft.Text(
+                        value=title,
+                        size=18,
+                        weight=ft.FontWeight.BOLD,
+                        text_align=ft.TextAlign.CENTER,
+                        color=ft.Colors.ON_SURFACE
+                    ),
+                    ft.Divider(height=10, color=ft.Colors.TRANSPARENT),
+                    ft.Text(
+                        value=description,
+                        size=14,
+                        color=ft.Colors.ON_SURFACE_VARIANT,
+                        text_align=ft.TextAlign.CENTER,
+                        # Garante que o texto quebre linha e não seja cortado
+                        no_wrap=False,
+                        selectable=False
+                    )
+                ],
+                # Centraliza e ajusta ao tamanho do conteúdo
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                tight=True,
+                spacing=5
             ),
-            width=AppDimensions.ICON_CONTAINER_SIZE,
-            height=AppDimensions.ICON_CONTAINER_SIZE,
-            border_radius=AppDimensions.ICON_CONTAINER_BORDER_RADIUS,
-            alignment=ft.Alignment(0, 0),
-            bgcolor=bg_color,
+            padding=20,
+            border_radius=10,
+            on_click=on_click,
+            ink=True
         )
-
-        super().__init__(
-            content=ft.Container(
-                content=ft.Column(
-                    controls=[
-                        icon_container,
-                        ft.Container(height=AppDimensions.MEDIUM_SPACING),
-                        ft.Text(title, size=AppFonts.BODY_LARGE,
-                                weight=ft.FontWeight.W_600),
-                        ft.Text(subtitle, size=AppFonts.BODY_SMALL,
-                                color=ft.Colors.OUTLINE),
-                    ],
-                    spacing=AppDimensions.SMALL_SPACING,
-                    horizontal_alignment=ft.CrossAxisAlignment.START,
-                ),
-                padding=AppDimensions.PAGE_PADDING,
-                on_hover=self.on_hover,
-                on_click=on_card_click,
-                data=title,
-                border_radius=AppDimensions.BORDER_RADIUS,
-                ink=True,
-            ),
-            elevation=AppDimensions.CARD_ELEVATION,
-        )
-
-    def on_hover(self, e: ft.HoverEvent):
-        self.elevation = AppDimensions.CARD_ELEVATION * \
-            2 if e.data == "true" else AppDimensions.CARD_ELEVATION
-        self.update()
+    )

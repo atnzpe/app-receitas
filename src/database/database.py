@@ -45,8 +45,9 @@ def init_database():
             """
             CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                user_id INTEGER, 
+                name TEXT NOT NULL UNIQUE,
+                user_id INTEGER,
+                icon TEXT DEFAULT 'restaurant_menu',
                 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
                 UNIQUE(name, user_id)
             );
