@@ -48,7 +48,7 @@ Este documento é a fonte única da verdade (SSOT) para o progresso do projeto.
 ### **5.2. Gestão de Conteúdo**
 * [x] **Imagens:** Suporte a URLs externas no cadastro e renderização nos cards.
 * [x] **Favoritos:** Lógica de favoritar/desfavoritar global para não-donos.
-* [ ] **Refinamento de Detalhes:** Exibir explicitamente os campos "Dicas Extras" e "Fonte/Origem" na tela `RecipeDetailView`.
+* [ x] **Refinamento de Detalhes:** Exibir explicitamente os campos "Dicas Extras" e "Fonte/Origem" na tela `RecipeDetailView`.
 
 ### **5.3. Módulo de Inteligência (Automação)**
 * [ ] **Importação via Link (Scraping):** * [ ] Extração de metadados (Schema.org) de sites externos.

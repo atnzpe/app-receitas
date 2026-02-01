@@ -113,25 +113,41 @@ def RecipeDetailView(page: ft.Page) -> ft.View:
         instructions_text = ft.Text(recipe.get(
             'instructions', ''), size=16, selectable=True)
 
-        # 5. Dicas e Fonte
+        # 5. Dicas e Fonte (Refinado conforme DoD da Sprint 5)
         extras = []
         if recipe.get('additional_instructions'):
-            extras.append(ft.Container(
-                content=ft.Column([
-                    ft.Row([ft.Icon(ft.Icons.LIGHTBULB, color=ft.Colors.AMBER), ft.Text(
-                        "Dica do Chef", weight=ft.FontWeight.BOLD)]),
-                    ft.Text(recipe['additional_instructions'], italic=True)
-                ]),
-                bgcolor=ft.Colors.AMBER_50, padding=15, border_radius=10,
-                border=ft.Border.all(1, ft.Colors.AMBER_200)
-            ))
+            extras.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Row([
+                            ft.Icon(ft.Icons.LIGHTBULB_CIRCLE,
+                                    color=ft.Colors.AMBER_700),
+                            ft.Text("Dica do Chef",
+                                    weight=ft.FontWeight.BOLD, size=16)
+                        ]),
+                        ft.Text(recipe['additional_instructions'],
+                                italic=True, size=14)
+                    ], spacing=5),
+                    bgcolor=ft.Colors.AMBER_50,
+                    padding=15,
+                    border_radius=10,
+                    border=ft.Border.all(1, ft.Colors.AMBER_200),
+                    margin=ft.margin.only(top=10)
+                )
+            )
 
         if recipe.get('source'):
-            extras.append(ft.Row([
-                ft.Icon(ft.Icons.LINK, size=16, color=ft.Colors.BLUE),
-                ft.Text(f"Fonte: {recipe['source']}", color=ft.Colors.BLUE)
-            ], alignment=ft.MainAxisAlignment.CENTER))
-
+            extras.append(
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.LANGUAGE, size=16,
+                                color=ft.Colors.BLUE_700),
+                        ft.Text(
+                            f"Origem: {recipe['source']}", color=ft.Colors.BLUE_700, weight=ft.FontWeight.W_500)
+                    ], alignment=ft.MainAxisAlignment.CENTER),
+                    padding=ft.padding.only(top=10)
+                )
+            )
         # 6. Barra de Ações
         actions = [
             ft.IconButton(ft.Icons.SHARE, tooltip="Compartilhar",
