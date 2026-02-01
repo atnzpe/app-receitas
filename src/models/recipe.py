@@ -1,53 +1,49 @@
 # ARQUIVO: src/models/recipe.py
-# OBJETIVO: Definir a estrutura de dados e regras de validação para Receitas e Ingredientes.
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict
 
-# --- Sub-model para Ingredientes (Detalhe) ---
+# --- 1. Sub-model para Ingredientes ---
+
+
 class IngredientSchema(BaseModel):
-    """
-    Representa um ingrediente individual dentro de uma receita.
-    """
+    """Schema para validação de ingredientes."""
     name: str = Field(..., min_length=2, description="Nome do ingrediente")
     quantity: Optional[str] = Field(None, description="Quantidade")
-    unit: Optional[str] = Field(None, description="Unidade de medida")
+    unit: Optional[str] = Field(None, description="Unidade")
 
     model_config = ConfigDict(from_attributes=True)
 
-# --- Model Base da Receita (Campos Comuns) ---
+# --- 2. Modelo Base ---
+
+
 class RecipeBase(BaseModel):
-    """
-    Campos compartilhados entre criação e leitura de receitas.
-    """
-    title: str = Field(..., min_length=3, max_length=150, description="Título da receita")
-    
-    category_id: Optional[int] = Field(None, description="ID da categoria")
-    
-    preparation_time: Optional[int] = Field(None, ge=0, description="Tempo em minutos")
-    
-    servings: Optional[str] = Field(None, max_length=50, description="Rendimento")
-    
-    # [CORREÇÃO TÁTICA]: Reduzido de 10 para 3 caracteres para facilitar testes
-    instructions: str = Field(..., min_length=3, description="Modo de preparo")
-    
-    additional_instructions: Optional[str] = Field(None, description="Dicas extras, caldas, etc.")
-    source: Optional[str] = Field(None, max_length=200, description="Fonte da receita")
-    
-    image_path: Optional[str] = None
+    """Campos comuns da receita."""
+    category_id: int = Field(..., description="ID da categoria")
+    title: str = Field(..., min_length=3, max_length=5000)
+    preparation_time: Optional[int] = Field(None, ge=1)
+    servings: Optional[str] = Field(None)
+    instructions: str = Field(..., min_length=1)
 
-# --- Model para Criação (Entrada da UI) ---
+    # [SPRINT 5] Novos Campos
+    additional_instructions: Optional[str] = Field(None)
+    source: Optional[str] = Field(None)
+    image_path: Optional[str] = Field(None, description="URL da imagem")
+
+    model_config = ConfigDict(from_attributes=True)
+
+# --- 3. Model Criação ---
+
+
 class RecipeCreate(RecipeBase):
-    """
-    Schema utilizado ao receber dados do formulário para criar uma nova receita.
-    """
-    ingredients: List[IngredientSchema] = Field(default_factory=list, description="Lista de ingredientes")
+    """Usado na entrada de dados (UI -> Backend)."""
+    ingredients: List[IngredientSchema] = Field(default_factory=list)
 
-# --- Model para Leitura (Saída do BD) ---
+# --- 4. Model Leitura ---
+
+
 class RecipeRead(RecipeBase):
-    """
-    Schema completo com dados gerados pelo banco (IDs, Datas).
-    """
+    """Usado na saída de dados (Backend -> UI)."""
     id: int
     user_id: int
     created_at: datetime

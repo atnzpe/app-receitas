@@ -6,106 +6,116 @@ from src.viewmodels.recipe_list_viewmodel import RecipeListViewModel
 def RecipeListView(page: ft.Page) -> ft.View:
     vm = RecipeListViewModel(page)
 
-    # Configura o modo para "my" (Minhas Receitas) explicitamente
-    vm.current_mode = "my"
-    vm.load_recipes()
+    # [SCROLL FIX] GridView usado como lista (runs_count=1) mas com performance de grid
+    recipes_list = ft.GridView(
+        expand=True,
+        runs_count=1,            # 1 Coluna = Lista
+        # Largura máxima (responsivo em telas gigantes)
+        max_extent=600,
+        child_aspect_ratio=4.0,  # Card bem horizontal
+        spacing=10,
+        padding=20,
+    )
 
-    def build_list():
+    def render_recipes():
+        recipes_list.controls.clear()
+
         if not vm.recipes:
-            return ft.Column(
-                [
-                    ft.Icon(ft.Icons.NO_MEALS, size=64,
-                            color=ft.Colors.GREY_400),
-                    ft.Text("Você ainda não tem receitas.",
-                            color=ft.Colors.GREY_500),
-                    ft.Text("Crie uma nova ou favorite alguma!",
-                            color=ft.Colors.GREY_400, size=12)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                expand=True
-            )
-
-        list_controls = []
-        for recipe in vm.recipes:
-            is_fav = bool(recipe.get('is_favorite', 0))
-            is_mine = recipe['user_id'] == vm.user.id
-
-            # Botões de Ação
-            fav_icon = ft.IconButton(
-                icon=ft.Icons.STAR if is_fav else ft.Icons.STAR_BORDER,
-                icon_color=ft.Colors.AMBER if is_fav else ft.Colors.GREY,
-                tooltip="Favoritar",
-                on_click=lambda e, id=recipe['id']: vm.toggle_favorite(id)
-            )
-
-            delete_icon = ft.IconButton(
-                icon=ft.Icons.DELETE_OUTLINE,
-                icon_color=ft.Colors.RED_400,
-                visible=is_mine,  # Só dono deleta
-                on_click=lambda e, id=recipe['id']: vm.delete_recipe(id)
-            )
-
-            edit_icon = ft.IconButton(
-                icon=ft.Icons.EDIT_OUTLINED,
-                icon_color=ft.Colors.BLUE,
-                visible=is_mine,  # Só dono edita
-                on_click=lambda e, id=recipe['id']: vm.navigate_to_edit(id)
-            )
-
-            # Card Clicável -> Leva aos Detalhes (Modo Leitura)
-            card_content = ft.ListTile(
-                leading=ft.Icon(ft.Icons.RESTAURANT_MENU,
-                                color=ft.Colors.ORANGE),
-                title=ft.Text(recipe['title'], weight=ft.FontWeight.BOLD),
-                subtitle=ft.Text(
-                    f"{recipe['preparation_time'] or '?'} min • {recipe['servings'] or 'N/A'}"),
-                trailing=ft.Row(
-                    controls=[edit_icon, fav_icon, delete_icon],
-                    alignment=ft.MainAxisAlignment.END,
-                    width=140
-                ),
-                # AÇÃO DE CLIQUE: Navega para leitura completa
-                on_click=lambda e, id=recipe['id']: vm.navigate_to_details(id)
-            )
-
-            list_controls.append(
-                ft.Card(
-                    content=card_content,
-                    elevation=2,
-                    margin=ft.margin.symmetric(vertical=5)
+            recipes_list.controls.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Icon(ft.Icons.NO_MEALS, size=64,
+                                color=ft.Colors.GREY_400),
+                        ft.Text("Nenhuma receita encontrada.",
+                                color=ft.Colors.GREY_500)
+                    ], horizontal_alignment="center"),
+                    alignment=ft.Alignment(0, 0), padding=40
                 )
             )
+        else:
+            for r in vm.recipes:
+                is_owner = (vm.user and r['user_id'] == vm.user.id)
+                img_url = r.get('image_path')
+                is_fav = bool(r.get('is_favorite', 0))
 
-        return ft.ListView(controls=list_controls, expand=True, padding=10, spacing=5)
+                # Miniatura
+                if img_url and len(img_url) > 5:
+                    leading_content = ft.Image(
+                        src=img_url, width=60, height=60, fit="cover", border_radius=8)
+                else:
+                    leading_content = ft.Container(
+                        content=ft.Icon(ft.Icons.RESTAURANT_MENU,
+                                        color=ft.Colors.ORANGE_600),
+                        bgcolor=ft.Colors.ORANGE_50, width=60, height=60, border_radius=8, alignment=ft.Alignment(0, 0)
+                    )
 
-    fab = ft.FloatingActionButton(
-        icon=ft.Icons.ADD,
-        content=ft.Row([ft.Icon(ft.Icons.ADD), ft.Text("Nova")],
-                       alignment="center", spacing=5),
-        width=120,
-        on_click=vm.navigate_to_create,
-        bgcolor=page.theme.color_scheme.primary
-    )
+                # Ações: Editar (Dono) ou Favoritar (Visitante)
+                if is_owner:
+                    trailing = ft.PopupMenuButton(
+                        items=[
+                            ft.PopupMenuItem(content=ft.Text(
+                                "Editar"), icon=ft.Icons.EDIT, on_click=lambda e, rid=r['id']: vm.navigate_to_edit(rid)),
+                            ft.PopupMenuItem(content=ft.Text(
+                                "Excluir"), icon=ft.Icons.DELETE, on_click=lambda e, rid=r['id']: vm.delete_recipe(rid)),
+                        ]
+                    )
+                else:
+                    trailing = ft.IconButton(
+                        icon=ft.Icons.STAR if is_fav else ft.Icons.STAR_BORDER,
+                        icon_color=ft.Colors.AMBER if is_fav else ft.Colors.GREY_400,
+                        tooltip="Favoritar",
+                        on_click=lambda e, rid=r['id']: [
+                            vm.toggle_favorite(rid), render_recipes()]
+                    )
+
+                recipes_list.controls.append(
+                    ft.Card(
+                        elevation=1,
+                        content=ft.Container(
+                            padding=10,
+                            bgcolor=ft.Colors.WHITE,
+                            border_radius=10,
+                            content=ft.ListTile(
+                                leading=leading_content,
+                                title=ft.Text(
+                                    r['title'], weight=ft.FontWeight.W_600),
+                                subtitle=ft.Text(
+                                    f"{r.get('preparation_time', '?')} min"),
+                                trailing=trailing,
+                                on_click=lambda e, rid=r['id']: vm.navigate_to_details(
+                                    rid)
+                            )
+                        )
+                    )
+                )
+        page.update()
+
+    original_load = vm.load_recipes
+    vm.load_recipes = lambda: (original_load(), render_recipes())
+    vm.load_recipes()
 
     return ft.View(
         route="/my_recipes",
+        bgcolor=ft.Colors.GREY_100,
+        floating_action_button=ft.FloatingActionButton(
+            content=ft.Row([ft.Icon(ft.Icons.ADD), ft.Text(
+                "Nova")], alignment="center", spacing=5),
+            bgcolor=ft.Colors.ORANGE_600,
+            width=120,
+            on_click=vm.navigate_to_create
+        ),
+        appbar=ft.AppBar(
+            title=ft.Text("Minhas Receitas"),
+            center_title=True,
+            bgcolor=ft.Colors.WHITE,
+            leading=ft.IconButton(ft.Icons.ARROW_BACK,
+                                  on_click=lambda _: page.go("/"))
+        ),
         controls=[
             ft.SafeArea(
                 content=ft.Column([
-                    # Removemos as Abas. Agora é só a lista direta.
-                    build_list()
+                    ft.Container(content=recipes_list, expand=True)
                 ], expand=True)
             )
-        ],
-        appbar=ft.AppBar(
-            leading=ft.IconButton(ft.Icons.ARROW_BACK,
-                                  on_click=lambda _: page.go("/")),
-            title=ft.Text("Minhas Receitas"),
-            center_title=True,
-            bgcolor=page.theme.color_scheme.surface,
-            elevation=0
-        ),
-        floating_action_button=fab,
-        bgcolor=page.theme.color_scheme.surface
+        ]
     )

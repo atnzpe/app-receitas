@@ -1,5 +1,4 @@
 # ARQUIVO: src/views/recipe_create_view.py
-# OBJETIVO: Tela híbrida para Criar e Editar Receitas.
 import flet as ft
 from typing import Callable, Optional
 from src.core.logger import get_logger
@@ -31,11 +30,11 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
         initial_data = viewModel.load_recipe_for_edit(edit_id)
         if initial_data:
             page_title_text = "Editar Receita"
-            # Limpa flag para não persistir se sair da tela
             page.data["editing_recipe_id"] = None
 
     # 2. Referências
     tf_title = ft.Ref[ft.TextField]()
+    tf_image = ft.Ref[ft.TextField]()  # [NOVO]
     dd_category = ft.Ref[ft.Dropdown]()
     tf_time = ft.Ref[ft.TextField]()
     tf_servings = ft.Ref[ft.TextField]()
@@ -137,11 +136,11 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
                 prep_time=tf_time.current.value,
                 servings=tf_servings.current.value,
                 add_instr=tf_add_instructions.current.value,
-                source=tf_source.current.value
+                source=tf_source.current.value,
+                image_path=tf_image.current.value  # [NOVO]
             )
 
             if success:
-                # Retorna para a lista ('/my_recipes') após salvar/editar
                 _show_feedback_dialog(
                     "Sucesso", "Receita salva!", is_error=False, on_ok=lambda _: page.go("/my_recipes"))
             else:
@@ -159,8 +158,9 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
     except:
         cat_options = []
 
-    # Valores Iniciais (Modo Edição)
+    # Valores Iniciais
     val_title = initial_data['title'] if initial_data else ""
+    val_image = initial_data.get('image_path', "") if initial_data else ""
     val_cat = str(initial_data['category_id']
                   ) if initial_data and initial_data['category_id'] else None
     val_time = str(initial_data['preparation_time']
@@ -170,70 +170,87 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
     val_add = initial_data['additional_instructions'] if initial_data else ""
     val_source = initial_data['source'] if initial_data else ""
 
-    content_layout = ft.Column(
-        scroll=ft.ScrollMode.HIDDEN,
-        controls=[
-            ft.Text(page_title_text, size=24, weight=ft.FontWeight.BOLD),
-            ft.Container(
-                expand=True,
-                content=ft.Column(
-                    scroll=ft.ScrollMode.AUTO,
-                    spacing=15,
-                    controls=[
-                        ft.TextField(ref=tf_title, label="Título *",
-                                     value=val_title, border=ft.InputBorder.UNDERLINE),
-                        ft.Dropdown(ref=dd_category, label="Categoria", value=val_cat,
-                                    options=cat_options, border=ft.InputBorder.UNDERLINE),
-                        ft.Row([
-                            ft.TextField(ref=tf_time, label="Tempo (min)", value=val_time, width=120,
-                                         keyboard_type=ft.KeyboardType.NUMBER, border=ft.InputBorder.UNDERLINE),
-                            ft.TextField(ref=tf_servings, label="Rendimento", value=val_servings,
-                                         expand=True, border=ft.InputBorder.UNDERLINE),
-                        ]),
-                        ft.Divider(),
-                        ft.Text("Ingredientes", size=16,
-                                weight=ft.FontWeight.W_600, color=ft.Colors.PRIMARY),
-                        ft.Row([
-                            ft.TextField(ref=tf_ing_name, label="Item",
-                                         expand=2, height=50, content_padding=10),
-                            ft.TextField(ref=tf_ing_qty, label="Qtd",
-                                         width=70, height=50, content_padding=10),
-                            ft.TextField(ref=tf_ing_unit, label="Unid",
-                                         width=70, height=50, content_padding=10),
-                            ft.IconButton(ft.Icons.ADD_CIRCLE, on_click=_on_add_ingredient,
-                                          icon_color=ft.Colors.PRIMARY, icon_size=30)
-                        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                        ft.Container(
-                            content=ft.ListView(ref=lv_ingredients, spacing=0),
-                            height=200, border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT), border_radius=8, padding=5
-                        ),
-                        ft.Divider(),
-                        ft.TextField(ref=tf_instructions, label="Modo de Preparo *",
-                                     value=val_instr, multiline=True, min_lines=5),
-                        ft.TextField(
-                            ref=tf_add_instructions, label="Dicas Extras", value=val_add, multiline=True),
-                        ft.TextField(ref=tf_source, label="Fonte",
-                                     value=val_source, prefix_icon=ft.Icons.LINK),
-                        ft.Container(height=20),
-                        ft.ElevatedButton(
-                            content=ft.Row([ft.Icon(ft.Icons.SAVE), ft.Text(
-                                "Salvar")], alignment=ft.MainAxisAlignment.CENTER),
-                            on_click=_on_save_click, style=ft.ButtonStyle(
-                                padding=20, shape=ft.RoundedRectangleBorder(radius=8))
-                        )
-                    ]
+    # [IMPORTANTE] Container interno recebe o padding para não quebrar o SafeArea
+    content_layout = ft.Container(
+        padding=20,
+        content=ft.Column(
+            scroll=ft.ScrollMode.HIDDEN,
+            controls=[
+                ft.Text(page_title_text, size=24, weight=ft.FontWeight.BOLD),
+                ft.Container(
+                    expand=True,
+                    content=ft.Column(
+                        scroll=ft.ScrollMode.AUTO,
+                        spacing=15,
+                        controls=[
+                            ft.TextField(
+                                ref=tf_title, label="Título *", value=val_title, border=ft.InputBorder.UNDERLINE),
+
+                            # [NOVO] Campo de Imagem
+                            ft.TextField(
+                                ref=tf_image,
+                                label="URL da Imagem",
+                                value=val_image,
+                                prefix_icon=ft.Icons.IMAGE,
+                                border=ft.InputBorder.UNDERLINE,
+                                hint_text="https://exemplo.com/foto.jpg"
+                            ),
+
+                            ft.Dropdown(ref=dd_category, label="Categoria", value=val_cat,
+                                        options=cat_options, border=ft.InputBorder.UNDERLINE),
+
+                            ft.Row([
+                                ft.TextField(ref=tf_time, label="Tempo (min)", value=val_time, width=120,
+                                             keyboard_type=ft.KeyboardType.NUMBER, border=ft.InputBorder.UNDERLINE),
+                                ft.TextField(ref=tf_servings, label="Rendimento", value=val_servings,
+                                             expand=True, border=ft.InputBorder.UNDERLINE),
+                            ]),
+
+                            ft.Divider(),
+                            ft.Text(
+                                "Ingredientes", size=16, weight=ft.FontWeight.W_600, color=ft.Colors.PRIMARY),
+
+                            ft.Row([
+                                ft.TextField(
+                                    ref=tf_ing_name, label="Item", expand=2, height=50, content_padding=10),
+                                ft.TextField(
+                                    ref=tf_ing_qty, label="Qtd", width=70, height=50, content_padding=10),
+                                ft.TextField(
+                                    ref=tf_ing_unit, label="Unid", width=70, height=50, content_padding=10),
+                                ft.IconButton(
+                                    ft.Icons.ADD_CIRCLE, on_click=_on_add_ingredient, icon_color=ft.Colors.PRIMARY, icon_size=30)
+                            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+
+                            ft.Container(
+                                content=ft.ListView(
+                                    ref=lv_ingredients, spacing=0),
+                                height=200, border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT), border_radius=8, padding=5
+                            ),
+
+                            ft.Divider(),
+                            ft.TextField(ref=tf_instructions, label="Modo de Preparo *",
+                                         value=val_instr, multiline=True, min_lines=5),
+                            ft.TextField(
+                                ref=tf_add_instructions, label="Dicas Extras", value=val_add, multiline=True),
+                            ft.TextField(ref=tf_source, label="Fonte",
+                                         value=val_source, prefix_icon=ft.Icons.LINK),
+
+                            ft.Container(height=20),
+                            ft.ElevatedButton(
+                                content=ft.Row([ft.Icon(ft.Icons.SAVE), ft.Text(
+                                    "Salvar")], alignment=ft.MainAxisAlignment.CENTER),
+                                on_click=_on_save_click,
+                                style=ft.ButtonStyle(
+                                    padding=20, shape=ft.RoundedRectangleBorder(radius=8))
+                            )
+                        ]
+                    )
                 )
-            )
-        ]
+            ]
+        )
     )
 
-    # Renderiza ingredientes iniciais se houver
     if initial_data:
-        # Hack técnico: Como o ListView ainda não foi montado pelo Flet na primeira passagem,
-        # não podemos chamar _render_ingredients() imediatamente.
-        # A lista será renderizada reativamente se o ViewModel já tiver os dados.
-        # Mas para garantir, podemos usar um did_mount (se classe) ou confiar no append inicial.
-        # Na função pura, vamos forçar a injeção inicial nos controls da ListView.
         lv_initial_controls = []
         for i, ing in enumerate(viewModel.temp_ingredients):
             lv_initial_controls.append(
@@ -252,10 +269,11 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/create_recipe",
+        # [CORREÇÃO] SafeArea sem padding
         controls=[ft.SafeArea(content=content_layout, expand=True)],
         appbar=ft.AppBar(
-            leading=ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda _: page.go(
-                "/my_recipes")),  # Volta para lista
+            leading=ft.IconButton(ft.Icons.ARROW_BACK,
+                                  on_click=lambda _: page.go("/my_recipes")),
             title=ft.Text(page_title_text),
             bgcolor=page.theme.color_scheme.surface
         ),
