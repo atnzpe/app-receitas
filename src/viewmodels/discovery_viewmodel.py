@@ -1,6 +1,7 @@
 # ARQUIVO: src/viewmodels/discovery_viewmodel.py
 import flet as ft
 from src.database.recipe_queries import RecipeQueries
+from src.database.category_queries import CategoryQueries
 from src.models.user_model import User
 from src.core.logger import get_logger
 
@@ -11,39 +12,73 @@ class DiscoveryViewModel:
     def __init__(self, page: ft.Page):
         self.page = page
         self.db = RecipeQueries()
+        self.cat_db = CategoryQueries()
+
         self.user: User = self.page.data.get("logged_in_user")
         self.recipes = []
-        self.load_initial_data()
+        self.categories_options = []
 
-    def load_initial_data(self):
+        # Estado dos Filtros
+        self.active_category_id = 0
+
+        # Inicialização
+        self.load_categories()
+        self.load_initial_context()
+
+    def load_categories(self):
+        """Carrega lista de categorias para o Dropdown."""
+        try:
+            cats = self.cat_db.get_user_categories(self.user.id)
+            # Opção '0' representa 'Todas'
+            self.categories_options = [
+                ft.dropdown.Option("0", "Todas as Categorias")]
+            self.categories_options.extend(
+                [ft.dropdown.Option(str(c['id']), c['name']) for c in cats]
+            )
+        except Exception as e:
+            logger.error(f"Erro ao carregar categorias: {e}")
+            self.categories_options = [ft.dropdown.Option("0", "Padrão")]
+
+    def load_initial_context(self):
+        """Verifica filtro vindo da navegação (Tela de Categorias)."""
+        cat_id = self.page.data.get("filter_category_id")
+
+        if cat_id:
+            logger.info(f"Contexto Detectado: Categoria ID {cat_id}")
+            self.active_category_id = int(cat_id)
+
+            # Limpa sessão
+            self.page.data["filter_category_id"] = None
+            self.page.data["filter_category_name"] = None
+
         self.search()
 
-    def search(self, term: str = "", max_time: str = "", servings: str = ""):
-        """
-        Executa a busca com filtros avançados.
-        """
+    def search(self, term: str = "", max_time: str = "", servings: str = "", category_val: str = None):
+        """Busca blindada."""
         try:
-            # Tratamento de tipos
-            time_limit = int(
-                max_time) if max_time and max_time.isdigit() else 0
+            # Conversão segura de tipos
+            # Aceita float do slider
+            time_limit = int(float(max_time)) if max_time else 0
             term = term.strip() if term else ""
             servings = servings.strip() if servings else ""
 
-            logger.info(
-                f"Busca Filtros: Termo='{term}', Tempo<={time_limit}, Porções='{servings}'")
+            if category_val:
+                self.active_category_id = int(category_val)
 
-            # [CORREÇÃO] Chamada direta sem fallback para garantir o uso do filtro
+            logger.info(
+                f"Busca: '{term}', Time<={time_limit}, CatID={self.active_category_id}")
+
             self.recipes = self.db.search_advanced(
                 uid=self.user.id,
                 term=term,
                 max_time=time_limit,
-                servings=servings
+                servings=servings,
+                category_id=self.active_category_id
             )
-
-            logger.info(f"Resultados encontrados: {len(self.recipes)}")
+            logger.info(f"Resultados: {len(self.recipes)}")
 
         except Exception as e:
-            logger.error(f"Erro na busca: {e}")
+            logger.error(f"Erro na busca: {e}", exc_info=True)
             self.recipes = []
 
     def navigate_to_details(self, recipe_id: int):

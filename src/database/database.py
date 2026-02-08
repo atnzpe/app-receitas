@@ -1,37 +1,43 @@
 # ARQUIVO: src/database/database.py
-# OBJETIVO: Gerenciar a conexão e o esquema do banco de dados SQLite.
 import sqlite3
 import os
 from src.core.logger import get_logger
 from src.core.exceptions import DatabaseError
 
-# Inicializa o logger específico para banco de dados
 logger = get_logger("src.database")
-
-# Definição de caminhos
 DB_DIR = "data"
 DB_NAME = "recipes.db"
 DB_PATH = os.path.join(DB_DIR, DB_NAME)
 
 
-def init_database():
-    """
-    Inicializa o banco de dados (Migrations Simplificadas).
-    Cria tabelas individualmente para garantir robustez.
-    """
-    logger.info("Iniciando verificação de esquema do Banco de Dados...")
+def get_db_path():
+    if not os.path.exists(DB_DIR):
+        os.makedirs(DB_DIR)
+    return DB_PATH
 
+
+def get_db_connection():
+    """Retorna uma conexão configurada com Row Factory."""
     try:
-        # Garante que a pasta de dados existe
-        os.makedirs(DB_DIR, exist_ok=True)
+        conn = sqlite3.connect(get_db_path())
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON;")
+        return conn
+    except sqlite3.Error as e:
+        logger.error(f"Falha de conexão SQLite: {e}")
+        raise DatabaseError("Não foi possível conectar ao banco de dados.", e)
 
-        conn = sqlite3.connect(DB_PATH)
+
+def init_database():
+    """Inicializa o esquema do banco de dados (Migrations Simplificadas)."""
+    logger.info("Iniciando verificação de esquema do Banco de Dados...")
+    conn = None
+    try:
+        conn = get_db_connection()
+        # [CRÍTICO] Modo WAL evita travamentos de leitura/escrita simultânea
+        conn.execute("PRAGMA journal_mode=WAL;")
         cursor = conn.cursor()
 
-        # Habilita Foreign Keys
-        cursor.execute("PRAGMA foreign_keys = ON;")
-
-        # Dicionário de tabelas para criação individual e rastreável
         tables = {
             "users": """
                 CREATE TABLE IF NOT EXISTS users (
@@ -74,7 +80,7 @@ def init_database():
                     image_path TEXT,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
                     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
                 );
             """,
@@ -100,21 +106,9 @@ def init_database():
             """
         }
 
-        # Executa a criação das tabelas uma a uma
         for table_name, query in tables.items():
-            try:
-                cursor.execute(query)
-                logger.debug(f"Tabela verificada/criada: {table_name}")
-            except sqlite3.Error as table_error:
-                logger.critical(
-                    f"Falha ao criar tabela {table_name}: {table_error}")
-                raise table_error
-
-        # Seed: Garante usuário SYSTEM
-        cursor.execute("""
-            INSERT OR IGNORE INTO users (full_name, email, hashed_password) 
-            VALUES ('System Admin', 'system@app.local', '$2b$12$SYSTEMUSERHASHPLACEHOLDERDO_NOT_USE_REAL_PWD');
-        """)
+            cursor.execute(query)
+            logger.debug(f"Tabela verificada/criada: {table_name}")
 
         conn.commit()
         logger.info("Banco de dados atualizado e verificado com sucesso.")
@@ -125,17 +119,5 @@ def init_database():
         raise DatabaseError(
             "Falha na inicialização do esquema do banco de dados.", e)
     finally:
-        if 'conn' in locals() and conn:
+        if conn:
             conn.close()
-
-
-def get_db_connection():
-    """Retorna uma conexão segura com Row Factory ativado."""
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON;")
-        return conn
-    except sqlite3.Error as e:
-        logger.error(f"Falha de conexão SQLite: {e}")
-        raise DatabaseError("Não foi possível conectar ao banco de dados.", e)

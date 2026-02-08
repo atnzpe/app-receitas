@@ -3,3 +3,4 @@ bcrypt
 numpy
 pandas
 pydantic
+beautifulsoup4

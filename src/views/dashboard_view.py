@@ -3,95 +3,72 @@ import flet as ft
 from src.viewmodels.dashboard_viewmodel import DashboardViewModel
 from src.views.components.dashboard_card import DashboardCard
 from src.views.components.app_footer import AppFooter
-from src.utils.theme import CARD_COLORS
+from src.utils.theme import CARD_COLORS, AppFonts
 
 
 def DashboardView(page: ft.Page) -> ft.View:
     vm = DashboardViewModel(page)
+    user_name = vm.user.full_name if vm.user else "Visitante"
 
-    # Dados dos Cards
-    cards_data = [
+    # Definição dos Cards
+    # [CORREÇÃO] Chave alterada de "desc" para "description" para evitar KeyError
+    cards = [
         {
             "icon": ft.Icons.RESTAURANT_MENU,
             "title": "Minhas Receitas",
-            "desc": "Crie e organize suas receitas. Veja suas criações e favoritos.",
+            "description": "Gerencie suas criações.",  # Corrigido aqui
             "color": CARD_COLORS["Receitas"]["fg_light"],
             "action": vm.navigate_to_my_recipes
         },
         {
-            "icon": ft.Icons.EDIT_NOTE_OUTLINED,
+            "icon": ft.Icons.EDIT_NOTE,
             "title": "Categorias",
-            "desc": "Gerencie categorias e pesquise receitas por categorias.",
+            "description": "Organize seu livro.",  # Corrigido aqui
             "color": CARD_COLORS["Cadastros"]["fg_light"],
             "action": vm.navigate_to_cadastros
         },
         {
-            "icon": ft.Icons.SEARCH_OUTLINED,
+            "icon": ft.Icons.SEARCH,
             "title": "Discovery",
-            "desc": "Encontre receitas nativas, suas ou de outros. Pesquise por dispensa.",
+            "description": "Busca inteligente.",  # Corrigido aqui
             "color": CARD_COLORS["Discovery"]["fg_light"],
-            # [ALTERAÇÃO AQUI] De show_feature... para navigate_to_discovery
             "action": vm.navigate_to_discovery
         },
         {
-            "icon": ft.Icons.SHOPPING_CART_OUTLINED,
-            "title": "Mercado & Lista",
-            "desc": "Apps parceiros, Mercados e Lista de Compras para fornecedores.",
+            "icon": ft.Icons.SHOPPING_CART,
+            "title": "Mercado",
+            "description": "Em breve.",  # Corrigido aqui
             "color": CARD_COLORS["Mercado"]["fg_light"],
             "action": vm.show_feature_in_development_dialog
         }
     ]
 
-    # Constrói a lista responsiva
-    responsive_controls = []
-    for card in cards_data:
-        responsive_controls.append(
-            ft.Column(
-                controls=[
-                    DashboardCard(
-                        icon=card["icon"],
-                        title=card["title"],
-                        description=card["desc"],
-                        color=card["color"],
-                        on_click=card["action"]
-                    )
-                ],
-                col={"xs": 12, "md": 6, "lg": 6}
+    responsive_cards = [
+        ft.Column([
+            DashboardCard(
+                icon=c["icon"],
+                title=c["title"],
+                description=c["description"],  # Agora a chave existe!
+                color=c["color"],
+                on_click=c["action"]
             )
-        )
+        ], col={"xs": 12, "md": 6}) for c in cards
+    ]
 
-    # Layout Principal
-    content = ft.Column(
-        controls=[
-            ft.Container(height=10),
-            ft.Text(
-                f"Olá, {vm.user.full_name if vm.user else 'Visitante'}!",
-                size=28,
-                weight=ft.FontWeight.BOLD,
-                color=ft.Colors.PRIMARY
-            ),
-            ft.Text("O que vamos cozinhar hoje?",
-                    size=16, color=ft.Colors.OUTLINE),
-            ft.Divider(height=30, color=ft.Colors.TRANSPARENT),
-
-            ft.ResponsiveRow(
-                controls=responsive_controls,
-                run_spacing=20,
-                spacing=20
-            )
-        ],
-        scroll=ft.ScrollMode.AUTO,
-        expand=True,
-    )
+    content = ft.Column([
+        ft.Container(height=20),
+        ft.Text(f"Olá, {user_name}!", size=AppFonts.TITLE_LARGE,
+                weight="bold", color=ft.Colors.PRIMARY),
+        ft.Text("O que vamos cozinhar hoje?",
+                size=AppFonts.BODY_MEDIUM, color="grey"),
+        ft.Divider(height=30, color="transparent"),
+        ft.ResponsiveRow(responsive_cards, run_spacing=20, spacing=20)
+    ], scroll=ft.ScrollMode.AUTO, expand=True)
 
     return ft.View(
         route="/",
         controls=[
-            # [CORREÇÃO] Removido o argumento 'minimum' que causava crash
-            ft.SafeArea(
-                content=content,
-                expand=True
-            ),
+            ft.SafeArea(content=content, expand=True),
             AppFooter(page)
         ],
         bgcolor=page.theme.color_scheme.surface

@@ -6,21 +6,22 @@ from src.viewmodels.recipe_list_viewmodel import RecipeListViewModel
 def RecipeListView(page: ft.Page) -> ft.View:
     vm = RecipeListViewModel(page)
 
-    # [SCROLL FIX] GridView usado como lista (runs_count=1) mas com performance de grid
+    # [SCROLL FIX] GridView deve ser o controle principal para ter scrollbar nativa
     recipes_list = ft.GridView(
-        expand=True,
-        runs_count=1,            # 1 Coluna = Lista
-        # Largura máxima (responsivo em telas gigantes)
-        max_extent=600,
-        child_aspect_ratio=4.0,  # Card bem horizontal
+        expand=True,          # Ocupa todo o espaço vertical disponível
+        runs_count=1,         # 1 Coluna = Comportamento de Lista
+        max_extent=600,       # Largura máxima dos cards
+        child_aspect_ratio=4.0,
         spacing=10,
         padding=20,
+        # Auto-scroll é nativo do GridView, não precisa configurar 'scroll' aqui
     )
 
     def render_recipes():
         recipes_list.controls.clear()
 
         if not vm.recipes:
+            # Estado Vazio
             recipes_list.controls.append(
                 ft.Container(
                     content=ft.Column([
@@ -28,17 +29,19 @@ def RecipeListView(page: ft.Page) -> ft.View:
                                 color=ft.Colors.GREY_400),
                         ft.Text("Nenhuma receita encontrada.",
                                 color=ft.Colors.GREY_500)
-                    ], horizontal_alignment="center"),
-                    alignment=ft.Alignment(0, 0), padding=40
+                    ], horizontal_alignment="center", spacing=10),
+                    alignment=ft.Alignment(0, 0),
+                    padding=40
                 )
             )
         else:
+            # Renderização dos Cards
             for r in vm.recipes:
                 is_owner = (vm.user and r['user_id'] == vm.user.id)
                 img_url = r.get('image_path')
                 is_fav = bool(r.get('is_favorite', 0))
 
-                # Miniatura
+                # Miniatura (Imagem ou Ícone)
                 if img_url and len(img_url) > 5:
                     leading_content = ft.Image(
                         src=img_url, width=60, height=60, fit="cover", border_radius=8)
@@ -46,17 +49,24 @@ def RecipeListView(page: ft.Page) -> ft.View:
                     leading_content = ft.Container(
                         content=ft.Icon(ft.Icons.RESTAURANT_MENU,
                                         color=ft.Colors.ORANGE_600),
-                        bgcolor=ft.Colors.ORANGE_50, width=60, height=60, border_radius=8, alignment=ft.Alignment(0, 0)
+                        bgcolor=ft.Colors.ORANGE_50, width=60, height=60,
+                        border_radius=8, alignment=ft.Alignment(0, 0)
                     )
 
-                # Ações: Editar (Dono) ou Favoritar (Visitante)
+                # Ações (Menu ou Favorito)
                 if is_owner:
                     trailing = ft.PopupMenuButton(
                         items=[
-                            ft.PopupMenuItem(content=ft.Text(
-                                "Editar"), icon=ft.Icons.EDIT, on_click=lambda e, rid=r['id']: vm.navigate_to_edit(rid)),
-                            ft.PopupMenuItem(content=ft.Text(
-                                "Excluir"), icon=ft.Icons.DELETE, on_click=lambda e, rid=r['id']: vm.delete_recipe(rid)),
+                            ft.PopupMenuItem(
+                                content=ft.Text("Editar"), icon=ft.Icons.EDIT,
+                                on_click=lambda e, rid=r['id']: vm.navigate_to_edit(
+                                    rid)
+                            ),
+                            ft.PopupMenuItem(
+                                content=ft.Text("Excluir"), icon=ft.Icons.DELETE,
+                                on_click=lambda e, rid=r['id']: vm.delete_recipe(
+                                    rid)
+                            ),
                         ]
                     )
                 else:
@@ -68,11 +78,12 @@ def RecipeListView(page: ft.Page) -> ft.View:
                             vm.toggle_favorite(rid), render_recipes()]
                     )
 
+                # Adiciona o Card ao GridView
                 recipes_list.controls.append(
                     ft.Card(
-                        elevation=1,
+                        elevation=2,  # Leve aumento para destaque
                         content=ft.Container(
-                            padding=10,
+                            padding=5,
                             bgcolor=ft.Colors.WHITE,
                             border_radius=10,
                             content=ft.ListTile(
@@ -80,7 +91,7 @@ def RecipeListView(page: ft.Page) -> ft.View:
                                 title=ft.Text(
                                     r['title'], weight=ft.FontWeight.W_600),
                                 subtitle=ft.Text(
-                                    f"{r.get('preparation_time', '?')} min"),
+                                    f"{r.get('preparation_time', '?')} min • {r.get('servings', '?')} porções"),
                                 trailing=trailing,
                                 on_click=lambda e, rid=r['id']: vm.navigate_to_details(
                                     rid)
@@ -90,6 +101,7 @@ def RecipeListView(page: ft.Page) -> ft.View:
                 )
         page.update()
 
+    # Hook para recarregar lista
     original_load = vm.load_recipes
     vm.load_recipes = lambda: (original_load(), render_recipes())
     vm.load_recipes()
@@ -113,9 +125,12 @@ def RecipeListView(page: ft.Page) -> ft.View:
         ),
         controls=[
             ft.SafeArea(
-                content=ft.Column([
-                    ft.Container(content=recipes_list, expand=True)
-                ], expand=True)
+                # [CORREÇÃO CRÍTICA]
+                # Removemos a ft.Column(scroll=AUTO) e colocamos o recipes_list direto.
+                # Como recipes_list é um GridView com expand=True, ele vai gerenciar
+                # o scroll e exibir a barra lateral definida no theme.py.
+                content=recipes_list,
+                expand=True
             )
         ]
     )

@@ -9,23 +9,20 @@ logger = get_logger("src.database.recipe")
 
 
 class RecipeQueries:
-    def __init__(self, db_path=None):
-        pass
-
     def _get_conn(self):
         return get_db_connection()
 
-    # --- MÉTODOS DE BUSCA E FILTRO (CRÍTICO) ---
+    def _close_conn(self, conn):
+        if conn:
+            conn.close()
 
-    def search_advanced(self, uid: int, term: str = "", max_time: int = 0, servings: str = "") -> List[Dict]:
-        """
-        Busca blindada com múltiplos filtros.
-        """
+    # --- BUSCA AVANÇADA (ATUALIZADA) ---
+    def search_advanced(self, uid: int, term: str = "", max_time: int = 0,
+                        servings: str = "", category_id: int = 0) -> List[Dict]:
+        """Busca com suporte a filtro por Categoria."""
         conn = self._get_conn()
         try:
-            params = [uid]  # Primeiro parametro para o subselect de favoritos
-
-            # Query Base: Traz tudo + status de favorito
+            params = [uid]
             sql = """
                 SELECT DISTINCT r.*, 
                        (SELECT COUNT(*) FROM favorite_recipes WHERE recipe_id=r.id AND user_id=?) as is_favorite
@@ -33,21 +30,23 @@ class RecipeQueries:
                 WHERE 1=1
             """
 
-            # 1. Filtro por Texto (Título ou Instruções)
             if term:
                 sql += " AND (r.title LIKE ? OR r.instructions LIKE ?)"
                 t = f"%{term}%"
                 params.extend([t, t])
 
-            # 2. Filtro por Tempo (Se maior que 0)
             if max_time > 0:
                 sql += " AND r.preparation_time <= ?"
                 params.append(max_time)
 
-            # 3. Filtro por Porções (Texto livre, busca parcial)
             if servings:
                 sql += " AND r.servings LIKE ?"
                 params.append(f"%{servings}%")
+
+            # [NOVO] Filtro por Categoria
+            if category_id > 0:
+                sql += " AND r.category_id = ?"
+                params.append(category_id)
 
             sql += " ORDER BY r.title ASC"
 
