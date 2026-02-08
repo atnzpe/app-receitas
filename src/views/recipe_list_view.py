@@ -1,103 +1,136 @@
 # ARQUIVO: src/views/recipe_list_view.py
-# OBJETIVO: Listagem com botão de Editar.
 import flet as ft
 from src.viewmodels.recipe_list_viewmodel import RecipeListViewModel
-from src.utils.theme import AppDimensions
 
 
 def RecipeListView(page: ft.Page) -> ft.View:
     vm = RecipeListViewModel(page)
-    vm.load_recipes()
 
-    def build_list():
+    # [SCROLL FIX] GridView deve ser o controle principal para ter scrollbar nativa
+    recipes_list = ft.GridView(
+        expand=True,          # Ocupa todo o espaço vertical disponível
+        runs_count=1,         # 1 Coluna = Comportamento de Lista
+        max_extent=600,       # Largura máxima dos cards
+        child_aspect_ratio=4.0,
+        spacing=10,
+        padding=20,
+        # Auto-scroll é nativo do GridView, não precisa configurar 'scroll' aqui
+    )
+
+    def render_recipes():
+        recipes_list.controls.clear()
+
         if not vm.recipes:
-            return ft.Column(
-                [
-                    ft.Icon(ft.Icons.NO_MEALS, size=64,
-                            color=ft.Colors.GREY_400),
-                    ft.Text("Nenhuma receita encontrada.",
-                            color=ft.Colors.GREY_500)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                expand=True
-            )
-
-        list_controls = []
-        for recipe in vm.recipes:
-            is_fav = bool(recipe.get('is_favorite', 0))
-            is_mine = recipe['user_id'] == vm.user.id
-
-            # Botões de Ação
-            fav_icon = ft.IconButton(
-                icon=ft.Icons.STAR if is_fav else ft.Icons.STAR_BORDER,
-                icon_color=ft.Colors.AMBER if is_fav else ft.Colors.GREY,
-                tooltip="Favoritar",
-                on_click=lambda e, id=recipe['id']: vm.toggle_favorite(id)
-            )
-
-            delete_icon = ft.IconButton(
-                icon=ft.Icons.DELETE_OUTLINE,
-                icon_color=ft.Colors.RED_400,
-                tooltip="Excluir",
-                visible=is_mine,
-                on_click=lambda e, id=recipe['id']: vm.delete_recipe(id)
-            )
-
-            # [NOVO] Botão de Editar
-            edit_icon = ft.IconButton(
-                icon=ft.Icons.EDIT_OUTLINED,
-                icon_color=ft.Colors.BLUE,
-                tooltip="Editar",
-                visible=is_mine,
-                on_click=lambda e, id=recipe['id']: vm.navigate_to_edit(id)
-            )
-
-            list_controls.append(
-                ft.Card(
-                    content=ft.ListTile(
-                        leading=ft.Icon(ft.Icons.RESTAURANT_MENU,
-                                        color=ft.Colors.ORANGE),
-                        title=ft.Text(recipe['title'],
-                                      weight=ft.FontWeight.BOLD),
-                        subtitle=ft.Text(
-                            f"{recipe['preparation_time'] or '?'} min • {recipe['servings'] or 'N/A'}"),
-                        # Adicionado edit_icon na Row
-                        trailing=ft.Row(
-                            controls=[edit_icon, fav_icon, delete_icon],
-                            alignment=ft.MainAxisAlignment.END,
-                            width=140
-                        )
-                    ),
-                    elevation=1,
-                    margin=ft.margin.symmetric(vertical=5)
+            # Estado Vazio
+            recipes_list.controls.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Icon(ft.Icons.NO_MEALS, size=64,
+                                color=ft.Colors.GREY_400),
+                        ft.Text("Nenhuma receita encontrada.",
+                                color=ft.Colors.GREY_500)
+                    ], horizontal_alignment="center", spacing=10),
+                    alignment=ft.Alignment(0, 0),
+                    padding=40
                 )
             )
+        else:
+            # Renderização dos Cards
+            for r in vm.recipes:
+                is_owner = (vm.user and r['user_id'] == vm.user.id)
+                img_url = r.get('image_path')
+                is_fav = bool(r.get('is_favorite', 0))
 
-        return ft.ListView(controls=list_controls, expand=True, padding=10, spacing=5)
+                # Miniatura (Imagem ou Ícone)
+                if img_url and len(img_url) > 5:
+                    leading_content = ft.Image(
+                        src=img_url, width=60, height=60, fit="cover", border_radius=8)
+                else:
+                    leading_content = ft.Container(
+                        content=ft.Icon(ft.Icons.RESTAURANT_MENU,
+                                        color=ft.Colors.ORANGE_600),
+                        bgcolor=ft.Colors.ORANGE_50, width=60, height=60,
+                        border_radius=8, alignment=ft.Alignment(0, 0)
+                    )
 
-    fab = ft.FloatingActionButton(
-        icon=ft.Icons.ADD,
-        content=ft.Row(
-            [ft.Icon(ft.Icons.ADD), ft.Text(
-                "Nova Receita", weight=ft.FontWeight.BOLD)],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=5
-        ),
-        width=170,
-        on_click=vm.navigate_to_create,
-        bgcolor=page.theme.color_scheme.primary
-    )
+                # Ações (Menu ou Favorito)
+                if is_owner:
+                    trailing = ft.PopupMenuButton(
+                        items=[
+                            ft.PopupMenuItem(
+                                content=ft.Text("Editar"), icon=ft.Icons.EDIT,
+                                on_click=lambda e, rid=r['id']: vm.navigate_to_edit(
+                                    rid)
+                            ),
+                            ft.PopupMenuItem(
+                                content=ft.Text("Excluir"), icon=ft.Icons.DELETE,
+                                on_click=lambda e, rid=r['id']: vm.delete_recipe(
+                                    rid)
+                            ),
+                        ]
+                    )
+                else:
+                    trailing = ft.IconButton(
+                        icon=ft.Icons.STAR if is_fav else ft.Icons.STAR_BORDER,
+                        icon_color=ft.Colors.AMBER if is_fav else ft.Colors.GREY_400,
+                        tooltip="Favoritar",
+                        on_click=lambda e, rid=r['id']: [
+                            vm.toggle_favorite(rid), render_recipes()]
+                    )
+
+                # Adiciona o Card ao GridView
+                recipes_list.controls.append(
+                    ft.Card(
+                        elevation=2,  # Leve aumento para destaque
+                        content=ft.Container(
+                            padding=5,
+                            bgcolor=ft.Colors.WHITE,
+                            border_radius=10,
+                            content=ft.ListTile(
+                                leading=leading_content,
+                                title=ft.Text(
+                                    r['title'], weight=ft.FontWeight.W_600),
+                                subtitle=ft.Text(
+                                    f"{r.get('preparation_time', '?')} min • {r.get('servings', '?')} porções"),
+                                trailing=trailing,
+                                on_click=lambda e, rid=r['id']: vm.navigate_to_details(
+                                    rid)
+                            )
+                        )
+                    )
+                )
+        page.update()
+
+    # Hook para recarregar lista
+    original_load = vm.load_recipes
+    vm.load_recipes = lambda: (original_load(), render_recipes())
+    vm.load_recipes()
 
     return ft.View(
         route="/my_recipes",
-        controls=[ft.SafeArea(content=build_list(), expand=True)],
-        appbar=ft.AppBar(
-            leading=ft.IconButton(ft.Icons.ARROW_BACK,
-                                  on_click=lambda _: page.go("/")),
-            title=ft.Text("Minhas Receitas"),
-            bgcolor=page.theme.color_scheme.surface
+        bgcolor=ft.Colors.GREY_100,
+        floating_action_button=ft.FloatingActionButton(
+            content=ft.Row([ft.Icon(ft.Icons.ADD), ft.Text(
+                "Nova")], alignment="center", spacing=5),
+            bgcolor=ft.Colors.ORANGE_600,
+            width=120,
+            on_click=vm.navigate_to_create
         ),
-        floating_action_button=fab,
-        bgcolor=page.theme.color_scheme.surface
+        appbar=ft.AppBar(
+            title=ft.Text("Minhas Receitas"),
+            center_title=True,
+            bgcolor=ft.Colors.WHITE,
+            leading=ft.IconButton(ft.Icons.ARROW_BACK,
+                                  on_click=lambda _: page.go("/"))
+        ),
+        controls=[
+            ft.SafeArea(
+                # [CORREÇÃO CRÍTICA]
+                # Removemos a ft.Column(scroll=AUTO) e colocamos o recipes_list direto.
+                # Como recipes_list é um GridView com expand=True, ele vai gerenciar
+                # o scroll e exibir a barra lateral definida no theme.py.
+                content=recipes_list,
+                expand=True
+            )
+        ]
     )

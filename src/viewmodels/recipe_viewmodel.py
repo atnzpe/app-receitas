@@ -1,106 +1,128 @@
 # ARQUIVO: src/viewmodels/recipe_viewmodel.py
-# OBJETIVO: Gerenciar estado de Criação e Edição de receitas.
-from typing import List, Optional
-from pydantic import ValidationError
+import flet as ft
+from typing import List, Optional, Dict, Tuple
 from src.core.logger import get_logger
 from src.database.recipe_queries import RecipeQueries
 from src.models.recipe import RecipeCreate, IngredientSchema
-from src.database.database import DB_PATH
+from src.models.user_model import User
+from src.services.scraper_service import RecipeScraper
 
 logger = get_logger("src.viewmodels.recipe")
 
 
 class RecipeViewModel:
-    def __init__(self):
-        self.db = RecipeQueries(DB_PATH)
+    def __init__(self, page: ft.Page):
+        self.page = page
+        self.db = RecipeQueries()
+        # [CORREÇÃO] Tipagem correta para lista de schemas
         self.temp_ingredients: List[IngredientSchema] = []
+        self.user: User = self.page.data.get("logged_in_user")
+        self.editing_recipe_id = self.page.data.get("editing_recipe_id")
 
-        # Estado de Edição: Se preenchido, estamos editando. Se None, criando.
-        self.editing_recipe_id: Optional[int] = None
+    def load_editing_data(self) -> Optional[Dict]:
+        """Carrega dados se estiver editando (compatibilidade com código antigo)."""
+        if self.editing_recipe_id:
+            return self.load_recipe_for_edit(self.editing_recipe_id)
+        return None
 
-    def add_temp_ingredient(self, name: str, qty: str, unit: str) -> str:
-        """Adiciona ingrediente à lista temporária."""
+    def add_temp_ingredient(self, name: str, qty: str, unit: str) -> Optional[str]:
         try:
-            name = name.strip() if name else ""
-            qty = qty.strip() if qty else None
-            unit = unit.strip() if unit else None
+            # Validação simples
+            if not name or len(name.strip()) < 2:
+                return "Nome inválido (mínimo 2 letras)"
 
-            ing = IngredientSchema(name=name, quantity=qty, unit=unit)
+            # [CORREÇÃO] Uso consistente de IngredientSchema
+            ing = IngredientSchema(
+                name=name.strip(), quantity=qty.strip(), unit=unit.strip())
             self.temp_ingredients.append(ing)
-            return None
-        except ValidationError as e:
-            return str(e.errors()[0]['msg'])
+            return None  # Sucesso retorna None (sem erro)
         except Exception as e:
-            return "Erro ao adicionar ingrediente."
+            return str(e)
 
     def remove_temp_ingredient(self, index: int):
         if 0 <= index < len(self.temp_ingredients):
             self.temp_ingredients.pop(index)
 
-    def load_recipe_for_edit(self, recipe_id: int) -> dict:
-        """Carrega dados do banco para o modo de edição."""
-        logger.info(f"Carregando receita {recipe_id} para edição.")
-        data = self.db.get_recipe_details(recipe_id)
-
+    def load_recipe_for_edit(self, rid: int):
+        data = self.db.get_recipe_details(rid)
         if data:
             self.editing_recipe_id = data['id']
-            # Converte dicionários do banco para objetos Pydantic na memória
-            self.temp_ingredients = []
-            if data.get('ingredients'):
-                for item in data['ingredients']:
-                    try:
-                        ing = IngredientSchema(
-                            name=item['name'],
-                            quantity=item['quantity'],
-                            unit=item['unit']
-                        )
-                        self.temp_ingredients.append(ing)
-                    except:
-                        pass
+            # Reconstrói a lista de ingredientes usando o Schema
+            self.temp_ingredients = [
+                IngredientSchema(
+                    name=i['name'], quantity=i['quantity'] or "", unit=i['unit'] or ""
+                )
+                for i in data.get('ingredients', [])
+            ]
             return data
         return None
 
-    def save_recipe(self, user_id: int, title: str, instructions: str,
-                    category_id: str, prep_time: str, servings: str,
-                    add_instr: str, source: str) -> bool:
-
-        mode = 'ATUALIZAÇÃO' if self.editing_recipe_id else 'CRIAÇÃO'
-        logger.info(f"Iniciando {mode} de receita...")
-
+    def save_recipe(self, title: str, prep_time: str, servings: str,
+                    instructions: str, add_instr: str, source: str,
+                    image_path: str, category_id: str) -> Tuple[bool, str]:
+        """
+        Salva ou atualiza a receita. Retorna (Sucesso, Mensagem).
+        """
         try:
+            if not self.user:
+                return False, "Sessão expirada. Faça login novamente."
+
+            # Conversão segura de tipos
             p_time = int(
                 prep_time) if prep_time and prep_time.isdigit() else None
-            cat_id = int(
-                category_id) if category_id and category_id.isdigit() else None
+            c_id = int(category_id) if category_id else 0
 
+            # Criação do Modelo Pydantic (Validação ocorre aqui)
             recipe_data = RecipeCreate(
+                category_id=c_id,
                 title=title,
-                category_id=cat_id,
                 preparation_time=p_time,
-                servings=servings or None,
+                servings=servings,
                 instructions=instructions,
-                additional_instructions=add_instr or None,
-                source=source or None,
+                additional_instructions=add_instr,
+                source=source,
+                image_path=image_path,
                 ingredients=self.temp_ingredients
             )
 
-            # Decisão: Insert ou Update?
+            # Decisão: Criar ou Atualizar?
             if self.editing_recipe_id:
                 success = self.db.update_recipe(
-                    self.editing_recipe_id, recipe_data, user_id)
+                    self.editing_recipe_id, recipe_data, self.user.id)
+                msg = "Receita atualizada com sucesso!"
             else:
-                success = self.db.create_recipe(recipe_data, user_id)
+                success = self.db.create_recipe(recipe_data, self.user.id)
+                msg = "Receita criada com sucesso!"
 
             if success:
+                # Limpa o estado após sucesso
                 self.temp_ingredients = []
-                self.editing_recipe_id = None  # Reseta estado
+                self.editing_recipe_id = None
+                return True, msg
+            else:
+                return False, "Erro no banco de dados ao salvar."
 
-            return success
-
-        except ValidationError as ve:
-            msg = ve.errors()[0]['msg']
-            logger.warning(f"Validação falhou: {msg}")
-            raise Exception(f"Dados inválidos: {msg}")
         except Exception as e:
-            logger.error(f"Erro ao salvar: {e}", exc_info=True)
-            raise e
+            logger.error(f"Erro ao salvar receita no ViewModel: {e}")
+            return False, f"Erro de validação: {str(e)}"
+
+    # --- NOVO MÉTODO DE IMPORTAÇÃO (WEB SCRAPING) ---
+    def import_from_url(self, url: str) -> Tuple[Optional[str], Optional[Dict]]:
+        """Chama o serviço de scraper."""
+        error, data = RecipeScraper.fetch_recipe(url)
+        if error:
+            return error, None
+
+        # Popula ingredientes temporários automaticamente
+        if data and 'ingredients' in data:
+            self.temp_ingredients = []  # Limpa atuais
+            for ing in data['ingredients']:
+                self.add_temp_ingredient(
+                    ing.get('name', ''),
+                    ing.get('quantity', ''),
+                    ing.get('unit', '')
+                )
+            # Remove do dict para não duplicar no retorno, pois já está no self.temp_ingredients
+            del data['ingredients']
+
+        return None, data

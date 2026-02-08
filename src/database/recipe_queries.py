@@ -1,9 +1,7 @@
 # ARQUIVO: src/database/recipe_queries.py
-# OBJETIVO: Centralizar operações de receitas (Create, Read, Update, Delete).
 import sqlite3
 from typing import List, Dict, Any, Optional
 from src.core.logger import get_logger
-from src.core.exceptions import DatabaseError
 from src.database.database import get_db_connection
 from src.models.recipe import RecipeCreate
 
@@ -11,187 +9,171 @@ logger = get_logger("src.database.recipe")
 
 
 class RecipeQueries:
-    def __init__(self, db_path: str = None):
-        pass
-
-    def _get_connection(self):
+    def _get_conn(self):
         return get_db_connection()
 
-    def create_recipe(self, recipe_data: RecipeCreate, user_id: int) -> bool:
-        conn = self._get_connection()
+    def _close_conn(self, conn):
+        if conn:
+            conn.close()
+
+    # --- BUSCA AVANÇADA (ATUALIZADA) ---
+    def search_advanced(self, uid: int, term: str = "", max_time: int = 0,
+                        servings: str = "", category_id: int = 0) -> List[Dict]:
+        """Busca com suporte a filtro por Categoria."""
+        conn = self._get_conn()
         try:
-            cursor = conn.cursor()
-            conn.execute("BEGIN TRANSACTION")
+            params = [uid]
+            sql = """
+                SELECT DISTINCT r.*, 
+                       (SELECT COUNT(*) FROM favorite_recipes WHERE recipe_id=r.id AND user_id=?) as is_favorite
+                FROM recipes r 
+                WHERE 1=1
+            """
 
-            cursor.execute("""
-                INSERT INTO recipes (
-                    user_id, category_id, title, preparation_time, servings, 
-                    instructions, additional_instructions, source, image_path
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                user_id, recipe_data.category_id, recipe_data.title,
-                recipe_data.preparation_time, recipe_data.servings,
-                recipe_data.instructions, recipe_data.additional_instructions,
-                recipe_data.source, recipe_data.image_path
-            ))
+            if term:
+                sql += " AND (r.title LIKE ? OR r.instructions LIKE ?)"
+                t = f"%{term}%"
+                params.extend([t, t])
 
-            recipe_id = cursor.lastrowid
+            if max_time > 0:
+                sql += " AND r.preparation_time <= ?"
+                params.append(max_time)
 
-            if recipe_data.ingredients:
-                ingredients_data = [
-                    (recipe_id, ing.name, ing.quantity, ing.unit)
-                    for ing in recipe_data.ingredients
-                ]
-                cursor.executemany("""
-                    INSERT INTO recipe_ingredients (recipe_id, name, quantity, unit)
-                    VALUES (?, ?, ?, ?)
-                """, ingredients_data)
+            if servings:
+                sql += " AND r.servings LIKE ?"
+                params.append(f"%{servings}%")
 
-            conn.commit()
-            logger.info(
-                f"Receita '{recipe_data.title}' (ID: {recipe_id}) criada.")
-            return True
+            # [NOVO] Filtro por Categoria
+            if category_id > 0:
+                sql += " AND r.category_id = ?"
+                params.append(category_id)
 
-        except sqlite3.Error as e:
-            conn.rollback()
-            logger.error(f"Erro ao criar receita: {e}")
-            raise DatabaseError(f"Erro ao salvar: {e}")
+            sql += " ORDER BY r.title ASC"
+
+            cur = conn.cursor()
+            cur.execute(sql, params)
+            return [dict(row) for row in cur.fetchall()]
+        except Exception as e:
+            logger.error(f"Erro search_advanced: {e}")
+            return []
         finally:
             conn.close()
 
-    def get_user_recipes(self, user_id: int) -> List[Dict[str, Any]]:
-        conn = self._get_connection()
+    # --- MÉTODOS CRUD PADRÃO ---
+
+    def create_recipe(self, data: RecipeCreate, user_id: int) -> bool:
+        conn = self._get_conn()
         try:
-            cursor = conn.cursor()
+            cur = conn.cursor()
+            conn.execute("BEGIN")
+            cur.execute("""
+                INSERT INTO recipes (user_id, category_id, title, preparation_time, servings, instructions, additional_instructions, source, image_path) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (user_id, data.category_id, data.title, data.preparation_time, data.servings, data.instructions, data.additional_instructions, data.source, data.image_path))
+            rid = cur.lastrowid
+            if data.ingredients:
+                ings = [(rid, i.name, i.quantity, i.unit)
+                        for i in data.ingredients]
+                cur.executemany(
+                    "INSERT INTO recipe_ingredients (recipe_id, name, quantity, unit) VALUES (?, ?, ?, ?)", ings)
+            conn.commit()
+            return True
+        except:
+            conn.rollback()
+            return False
+        finally:
+            conn.close()
+
+    def update_recipe(self, rid: int, data: RecipeCreate, uid: int) -> bool:
+        conn = self._get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT 1 FROM recipes WHERE id=? AND user_id=?", (rid, uid))
+            if not cur.fetchone():
+                return False
+            conn.execute("BEGIN")
+            cur.execute("""
+                UPDATE recipes SET category_id=?, title=?, preparation_time=?, servings=?, instructions=?, additional_instructions=?, source=?, image_path=?, updated_at=CURRENT_TIMESTAMP
+                WHERE id=?
+            """, (data.category_id, data.title, data.preparation_time, data.servings, data.instructions, data.additional_instructions, data.source, data.image_path, rid))
+            cur.execute(
+                "DELETE FROM recipe_ingredients WHERE recipe_id=?", (rid,))
+            if data.ingredients:
+                ings = [(rid, i.name, i.quantity, i.unit)
+                        for i in data.ingredients]
+                cur.executemany(
+                    "INSERT INTO recipe_ingredients (recipe_id, name, quantity, unit) VALUES (?, ?, ?, ?)", ings)
+            conn.commit()
+            return True
+        except:
+            conn.rollback()
+            return False
+        finally:
+            conn.close()
+
+    def get_recipe_details(self, rid: int) -> Optional[Dict]:
+        conn = self._get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM recipes WHERE id=?", (rid,))
+            row = cur.fetchone()
+            if not row:
+                return None
+            rec = dict(row)
+            cur.execute(
+                "SELECT name, quantity, unit FROM recipe_ingredients WHERE recipe_id=?", (rid,))
+            rec['ingredients'] = [dict(r) for r in cur.fetchall()]
+            return rec
+        finally:
+            conn.close()
+
+    def get_user_recipes(self, user_id: int) -> List[Dict]:
+        conn = self._get_conn()
+        try:
+            cur = conn.cursor()
             sql = """
-                SELECT DISTINCT r.*, 
-                       CASE WHEN fr.user_id IS NOT NULL THEN 1 ELSE 0 END as is_favorite
+                SELECT DISTINCT r.*, CASE WHEN fr.user_id IS NOT NULL THEN 1 ELSE 0 END as is_favorite
                 FROM recipes r
                 LEFT JOIN favorite_recipes fr ON r.id = fr.recipe_id AND fr.user_id = ?
                 WHERE r.user_id = ? OR fr.user_id IS NOT NULL
                 ORDER BY r.created_at DESC
             """
-            cursor.execute(sql, (user_id, user_id))
-            rows = cursor.fetchall()
-            return [dict(row) for row in rows]
-        except sqlite3.Error as e:
-            logger.error(f"Erro ao buscar receitas: {e}")
-            return []
+            cur.execute(sql, (user_id, user_id))
+            return [dict(row) for row in cur.fetchall()]
         finally:
             conn.close()
 
     def delete_recipe(self, recipe_id: int, user_id: int) -> bool:
-        conn = self._get_connection()
+        conn = self._get_conn()
         try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "DELETE FROM recipes WHERE id = ? AND user_id = ?", (recipe_id, user_id))
+            cur = conn.cursor()
+            cur.execute(
+                "DELETE FROM recipes WHERE id=? AND user_id=?", (recipe_id, user_id))
             conn.commit()
-            return cursor.rowcount > 0
-        except sqlite3.Error as e:
-            logger.error(f"Erro ao deletar: {e}")
-            return False
+            return cur.rowcount > 0
         finally:
             conn.close()
 
-    def toggle_favorite(self, recipe_id: int, user_id: int) -> bool:
-        conn = self._get_connection()
+    def toggle_favorite(self, rid: int, uid: int) -> bool:
+        conn = self._get_conn()
         try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT 1 FROM favorite_recipes WHERE user_id=? AND recipe_id=?", (user_id, recipe_id))
-            if cursor.fetchone():
-                cursor.execute(
-                    "DELETE FROM favorite_recipes WHERE user_id=? AND recipe_id=?", (user_id, recipe_id))
-                result = False
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT 1 FROM favorite_recipes WHERE user_id=? AND recipe_id=?", (uid, rid))
+            if cur.fetchone():
+                cur.execute(
+                    "DELETE FROM favorite_recipes WHERE user_id=? AND recipe_id=?", (uid, rid))
+                res = False
             else:
-                cursor.execute(
-                    "INSERT INTO favorite_recipes (user_id, recipe_id) VALUES (?, ?)", (user_id, recipe_id))
-                result = True
+                cur.execute(
+                    "INSERT INTO favorite_recipes (user_id, recipe_id) VALUES (?,?)", (uid, rid))
+                res = True
             conn.commit()
-            return result
-        except sqlite3.Error as e:
-            logger.error(f"Erro toggle favorite: {e}")
-            return False
+            return res
         finally:
             conn.close()
 
-    # --- MÉTODOS PARA EDIÇÃO (UPDATE) ---
-
-    def get_recipe_details(self, recipe_id: int) -> Optional[Dict[str, Any]]:
-        """Busca dados completos da receita para edição."""
-        conn = self._get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM recipes WHERE id = ?", (recipe_id,))
-            row = cursor.fetchone()
-            if not row:
-                return None
-
-            recipe = dict(row)
-
-            # Busca ingredientes
-            cursor.execute(
-                "SELECT name, quantity, unit FROM recipe_ingredients WHERE recipe_id = ?", (recipe_id,))
-            ing_rows = cursor.fetchall()
-            recipe['ingredients'] = [dict(row) for row in ing_rows]
-
-            return recipe
-        except sqlite3.Error as e:
-            logger.error(f"Erro ao buscar detalhes: {e}")
-            return None
-        finally:
-            conn.close()
-
-    def update_recipe(self, recipe_id: int, recipe_data: RecipeCreate, user_id: int) -> bool:
-        """Atualiza receita e recria ingredientes."""
-        conn = self._get_connection()
-        try:
-            cursor = conn.cursor()
-            conn.execute("BEGIN TRANSACTION")
-
-            # Verifica propriedade
-            cursor.execute(
-                "SELECT 1 FROM recipes WHERE id = ? AND user_id = ?", (recipe_id, user_id))
-            if not cursor.fetchone():
-                logger.warning(
-                    f"Tentativa de editar receita alheia: {recipe_id}")
-                return False
-
-            # Atualiza dados básicos
-            cursor.execute("""
-                UPDATE recipes SET 
-                    category_id=?, title=?, preparation_time=?, servings=?, 
-                    instructions=?, additional_instructions=?, source=?, updated_at=CURRENT_TIMESTAMP
-                WHERE id=?
-            """, (
-                recipe_data.category_id, recipe_data.title,
-                recipe_data.preparation_time, recipe_data.servings,
-                recipe_data.instructions, recipe_data.additional_instructions,
-                recipe_data.source, recipe_id
-            ))
-
-            # Atualiza Ingredientes (Delete + Insert)
-            cursor.execute(
-                "DELETE FROM recipe_ingredients WHERE recipe_id = ?", (recipe_id,))
-
-            if recipe_data.ingredients:
-                ingredients_data = [
-                    (recipe_id, ing.name, ing.quantity, ing.unit)
-                    for ing in recipe_data.ingredients
-                ]
-                cursor.executemany("""
-                    INSERT INTO recipe_ingredients (recipe_id, name, quantity, unit)
-                    VALUES (?, ?, ?, ?)
-                """, ingredients_data)
-
-            conn.commit()
-            logger.info(f"Receita {recipe_id} atualizada.")
-            return True
-
-        except sqlite3.Error as e:
-            conn.rollback()
-            logger.error(f"Erro ao atualizar: {e}")
-            raise DatabaseError("Falha na atualização.", e)
-        finally:
-            conn.close()
+    # Mantido para compatibilidade, mas o Discovery deve usar search_advanced
+    def search_recipes_by_name(self, term: str, uid: int) -> List[Dict]:
+        return self.search_advanced(uid, term=term)

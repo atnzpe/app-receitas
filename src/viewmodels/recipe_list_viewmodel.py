@@ -1,5 +1,4 @@
 # ARQUIVO: src/viewmodels/recipe_list_viewmodel.py
-# OBJETIVO: Gerenciar lista e navegação para edição.
 import flet as ft
 from typing import Optional
 from src.core.logger import get_logger
@@ -9,12 +8,16 @@ from src.models.user_model import User
 logger = get_logger("src.viewmodels.recipe_list")
 
 class RecipeListViewModel:
+    """
+    Gerencia o estado da tela de listagem (Minhas Receitas).
+    """
     def __init__(self, page: ft.Page):
         self.page = page
         self.db = RecipeQueries()
         self.recipes = []
         self.user: User = self.page.data.get("logged_in_user")
         self.current_dialog: Optional[ft.AlertDialog] = None
+        self.current_mode = "my"
 
     def _close_dialog(self, e):
         if self.current_dialog:
@@ -36,13 +39,22 @@ class RecipeListViewModel:
         dlg.open = True
         self.page.update()
 
+    def toggle_mode(self, mode: str):
+        if mode != self.current_mode:
+            logger.info(f"Alternando modo de lista para: {mode}")
+            self.current_mode = mode
+            self.load_recipes()
+
     def load_recipes(self):
         if not self.user: return
         try:
+            # Na view "Minhas Receitas", usamos sempre get_user_recipes
             self.recipes = self.db.get_user_recipes(self.user.id)
+            logger.info(f"Lista carregada ({self.current_mode}): {len(self.recipes)} itens.")
             self.page.update()
         except Exception as e:
             logger.error(f"Erro load: {e}")
+            self._show_feedback_modal("Erro", "Falha ao carregar lista.", is_error=True)
 
     def delete_recipe(self, recipe_id: int):
         try:
@@ -57,23 +69,24 @@ class RecipeListViewModel:
     def toggle_favorite(self, recipe_id: int):
         try:
             status = self.db.toggle_favorite(recipe_id, self.user.id)
+            # Recarrega a lista para atualizar o ícone visualmente se necessário, 
+            # ou apenas exibe mensagem. O ideal é atualizar o estado local.
             msg = "Adicionado aos Favoritos!" if status else "Removido dos Favoritos."
-            self.load_recipes()
+            self.load_recipes() 
             self._show_feedback_modal("Favoritos", msg, is_error=False)
         except Exception:
             self._show_feedback_modal("Erro", "Falha ao atualizar favorito.", is_error=True)
 
     def navigate_to_create(self, e):
-        # Limpa qualquer ID de edição pendente para iniciar limpo
         if "editing_recipe_id" in self.page.data:
             del self.page.data["editing_recipe_id"]
         self.page.go("/create_recipe")
-        
+
     def navigate_to_edit(self, recipe_id: int):
-        # Configura sessão para modo edição
         self.page.data["editing_recipe_id"] = recipe_id
-        logger.info(f"Iniciando edição da receita {recipe_id}")
         self.page.go("/create_recipe")
 
-    def navigate_to_details(self, recipe_id):
-        pass
+    def navigate_to_details(self, recipe_id: int):
+        self.page.data["detail_recipe_id"] = recipe_id
+        self.page.data["previous_route"] = "/my_recipes" 
+        self.page.go("/recipe_detail")

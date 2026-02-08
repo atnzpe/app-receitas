@@ -1,9 +1,11 @@
-# CÓDIGO ATUALIZADO (FLET 0.80+)
+# ARQUIVO: src/views/components/app_footer.py
 import flet as ft
 from src.utils.theme import AppDimensions
 
+# [CORREÇÃO] Adicionado o parâmetro 'page' para evitar o TypeError
 
-def AppFooter() -> ft.Container:
+
+def AppFooter(page: ft.Page = None) -> ft.Container:
     LINKEDIN_URL = "https://www.linkedin.com/in/gleysonatanazio/"
 
     return ft.Container(
@@ -16,8 +18,9 @@ def AppFooter() -> ft.Container:
                 ),
                 ft.Text("Criado por "),
                 ft.TextButton(
-                    content=ft.Text("Gleyson Atanazio"),  # Correção Botão
+                    content=ft.Text("Gleyson Atanazio"),
                     url=LINKEDIN_URL,
+                    # e.page garante que pegamos a página do evento, seguro em qualquer contexto
                     on_click=lambda e: e.page.launch_url(LINKEDIN_URL),
                     style=ft.ButtonStyle(
                         padding=0,
@@ -29,7 +32,7 @@ def AppFooter() -> ft.Container:
             spacing=AppDimensions.SMALL_SPACING
         ),
         height=AppDimensions.FOOTER_HEIGHT,
-        # CORREÇÃO AQUI:
+        # Alinhamento seguro para todas as versões
         alignment=ft.Alignment(0, 0),
         bgcolor=ft.Colors.SURFACE
     )

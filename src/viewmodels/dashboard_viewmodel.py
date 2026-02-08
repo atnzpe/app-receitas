@@ -1,46 +1,42 @@
+# ARQUIVO: src/viewmodels/dashboard_viewmodel.py
 import flet as ft
-import logging
-from src.models.user_model import User
-from typing import Optional
+from src.core.logger import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("src.viewmodels.dashboard")
 
 
 class DashboardViewModel:
     def __init__(self, page: ft.Page):
         self.page = page
-        self.user: User = self.page.data.get(
-            "logged_in_user") if self.page.data else None
-
-        if not self.user:
-            logger.warning("Usuário não encontrado na sessão.")
-
-        self.theme_icon_button: Optional[ft.IconButton] = None
-
-    def on_logout(self, e):
-        logger.info("Logout solicitado.")
-        if self.page.data:
-            self.page.data["logged_in_user"] = None
-        self.page.go("/login")
-
-    def toggle_theme(self, e):
-        try:
-            current = self.page.theme_mode
-            self.page.theme_mode = ft.ThemeMode.LIGHT if current == ft.ThemeMode.DARK else ft.ThemeMode.DARK
-            self.page.update()
-        except Exception as ex:
-            logger.error(f"Erro tema: {ex}")
-
-    def get_theme_icon(self) -> str:
-        return ft.Icons.LIGHT_MODE_OUTLINED if self.page.theme_mode == ft.ThemeMode.DARK else ft.Icons.DARK_MODE_OUTLINED
-
-    def show_feature_in_development_dialog(self, e):
-        # Placeholder
-        pass
-
-    def navigate_to_cadastros(self, e):
-        self.page.go("/categories")
+        self.user = self.page.data.get("logged_in_user")
 
     def navigate_to_my_recipes(self, e):
-        # MUDANÇA: Agora vai para a lista, não direto para criar
+        logger.info("Navegando para: Minhas Receitas")
+        # Tente page.go se push_route falhar visualmente,
+        # mas vamos manter o padrão do projeto primeiro.
         self.page.go("/my_recipes")
+
+    def navigate_to_cadastros(self, e):
+        logger.info("Navegando para: Categorias")
+        self.page.go("/categories")
+
+    def navigate_to_discovery(self, e):
+        logger.info("Navegando para: Discovery")
+        self.page.go("/discovery")
+
+    def show_feature_in_development_dialog(self, e):
+        logger.info("Abrindo modal: Em Desenvolvimento")
+        dlg = ft.AlertDialog(
+            title=ft.Text("Em Desenvolvimento"),
+            content=ft.Text("Funcionalidade em breve!"),
+            actions=[
+                ft.TextButton("OK", on_click=lambda _: self._close_dialog(dlg))
+            ],
+        )
+        self.page.dialog = dlg
+        dlg.open = True
+        self.page.update()
+
+    def _close_dialog(self, dlg):
+        dlg.open = False
+        self.page.update()
