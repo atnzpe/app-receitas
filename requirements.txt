@@ -4,3 +4,4 @@ numpy
 pandas
 pydantic
 beautifulsoup4
+requests
