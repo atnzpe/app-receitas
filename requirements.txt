@@ -5,3 +5,13 @@ pandas
 pydantic
 beautifulsoup4
 requests
+pillow
+pytesseract
+opencv-python
+SpeechRecognition
+pyaudio
+pdfplumber
+pytesseract
+pypdf
+pypdfium2
+pdf2image
