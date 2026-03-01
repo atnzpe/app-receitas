@@ -21,12 +21,31 @@ logger = get_logger("main")
 
 def main(page: ft.Page):
     # Tratamento Global de Erros UI
-    def global_error_handler(e):
-        error_msg = f"{type(e).__name__}: {str(e)}"
+    def global_error_handler(ex: Exception):
+        error_msg = str(ex)
+
         logger.critical(f"UNHANDLED UI EXCEPTION: {error_msg}", exc_info=True)
-        # Tenta mostrar erro na tela mesmo se tudo falhar
-        page.add(ft.Text(f"ERRO CRÍTICO:\n{error_msg}", color=ft.Colors.RED))
-        page.update()
+
+        if page.views:
+            page.views.clear()
+            page.views.append(
+                ft.View(
+                    "/error",
+                    controls=[
+                        ft.Container(
+                            content=ft.Text(
+                                f"ERRO CRÍTICO:\n\n{error_msg}",
+                                color=ft.Colors.RED
+                            ),
+                            padding=40
+                        )
+                    ]
+                )
+            )
+            page.update()
+        else:
+            # Fallback absoluto
+            print("ERRO CRÍTICO (sem view ativa):", error_msg)
 
     try:
         logger.info("=== INICIANDO APLICAÇÃO (MILITARY GRADE) ===")

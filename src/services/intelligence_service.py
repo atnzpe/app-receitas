@@ -1,150 +1,174 @@
 # ARQUIVO: src/services/intelligence_service.py
-import requests
-import json
 import re
-from bs4 import BeautifulSoup
-from typing import Optional, Dict, Any
+import os
+import sys
+from typing import Optional, Dict, Any, List
 from src.core.logger import get_logger
+from src.services.scraper_service import RecipeScraper
 
 logger = get_logger("src.services.intelligence")
 
-# --- IMPORTAÇÕES DEFENSIVAS (Foco em Android) ---
-# Em Android/Mobile, bibliotecas como Tesseract ou SpeechRecognition podem falhar
-# na instalação ou execução por falta de binários do sistema.
-# O try/except garante que o app ABRA mesmo sem elas.
+# --- 1. BLINDAGEM DE DEPENDÊNCIAS ---
+# Tenta importar as bibliotecas pesadas. Se falhar (ex: no Android), define flags como False.
+HAS_PDF_SUPPORT = False
+HAS_OCR_SUPPORT = False
 
-HAS_OCR = False
+try:
+    import pdfplumber
+    HAS_PDF_SUPPORT = True
+except ImportError:
+    logger.warning("Biblioteca 'pdfplumber' não encontrada. Leitura de PDF desativada.")
+
 try:
     import pytesseract
     from PIL import Image
-    HAS_OCR = True
-except ImportError:
-    logger.warning("OCR indisponível: pytesseract ou Pillow não instalados.")
+    HAS_OCR_SUPPORT = True
 
-HAS_VOICE = False
-try:
-    import speech_recognition as sr
-    HAS_VOICE = True
+    # Configuração Dinâmica do Tesseract para Windows
+    if os.name == 'nt':
+        # Tenta caminhos comuns ou variáveis de ambiente
+        possible_paths = [
+            r'C:\Program Files\Tesseract-OCR\tesseract.exe',
+            r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe',
+            os.path.join(os.getenv('LOCALAPPDATA', ''), 'Tesseract-OCR', 'tesseract.exe')
+        ]
+        tess_found = False
+        for path in possible_paths:
+            if os.path.exists(path):
+                pytesseract.pytesseract.tesseract_cmd = path
+                tess_found = True
+                break
+
+        if not tess_found:
+            # Se não achar o binário, desativa o OCR para não crashar na execução
+            logger.warning("Binário do Tesseract não encontrado no Windows.")
+            HAS_OCR_SUPPORT = False
+
 except ImportError:
-    logger.warning("Voz indisponível: SpeechRecognition não instalado.")
+    logger.warning("Bibliotecas de OCR (pytesseract/Pillow) não encontradas.")
 
 
 class IntelligenceService:
     """
-    Serviço central de Automação.
-    Blinda o app contra falhas de dependência em ambiente Mobile.
+    Serviço de Inteligência Híbrido (Web + Arquivos).
+    Projetado para rodar em qualquer plataforma (Cross-Platform Safe).
     """
 
-    # --- 1. WEB SCRAPING (Funciona em qualquer lugar com Internet) ---
+    # --- WEB SCRAPING (Funciona em tudo que tem internet) ---
     @staticmethod
     def fetch_recipe_data(url: str) -> tuple[Optional[str], Optional[Dict[str, Any]]]:
-        if not url.startswith("http"):
-            return "URL inválida. Inclua http:// ou https://", None
+        try:
+            return RecipeScraper.fetch_recipe(url)
+        except Exception as e:
+            logger.error(f"Erro no fetch_recipe_data: {e}")
+            return str(e), None
 
-        headers = {'User-Agent': 'Mozilla/5.0 (Android 10; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0'}
+    # --- LEITURA DE PDF (Segura) ---
+    @staticmethod
+    def read_pdf(file_path: str) -> str:
+        if not HAS_PDF_SUPPORT:
+            return "ERRO: O suporte a PDF não está disponível neste dispositivo."
+
+        logger.info(f"Lendo PDF: {file_path}")
+        full_text = ""
+        try:
+            with pdfplumber.open(file_path) as pdf:
+                for page in pdf.pages:
+                    text = page.extract_text()
+                    if text:
+                        full_text += text + "\n"
+            return full_text
+        except Exception as e:
+            logger.error(f"Erro ao ler PDF: {e}")
+            return "Não foi possível extrair texto deste PDF. Ele pode ser uma imagem escaneada."
+
+    # --- OCR / IMAGEM (Segura) ---
+    @staticmethod
+    def read_image(file_path: str) -> str:
+        """
+        Tenta ler imagem. Se estiver no Android ou sem Tesseract,
+        retorna aviso amigável em vez de crashar.
+        """
+        if not HAS_OCR_SUPPORT:
+            # Mensagem técnica para o usuário entender por que falhou
+            if os.name == 'nt':
+                return "ERRO: Tesseract OCR não instalado no Windows."
+            else:
+                # No Android, pytesseract não funciona nativamente sem receitas complexas do Buildozer
+                return "OCR Indisponível: Esta função requer processamento local não suportado neste dispositivo móvel."
+
+        logger.info(f"Lendo Imagem (OCR): {file_path}")
+        try:
+            img = Image.open(file_path)
+            text = pytesseract.image_to_string(img, lang='por')
+            return text
+        except Exception as e:
+            logger.error(f"Erro no OCR: {e}")
+            return "Erro ao processar imagem."
+
+    # --- PARSER DE TEXTO (Puro Python - Roda em tudo) ---
+    @staticmethod
+    def parse_raw_text(text: str) -> Dict[str, Any]:
+        """
+        Analisa o texto bruto extraído e tenta estruturar.
+        """
+        # Se o texto for uma mensagem de erro das funções acima, retorna vazio
+        if text.startswith("ERRO") or text.startswith("OCR Indisponível"):
+            return {}
 
         try:
-            logger.info(f"Baixando URL: {url}")
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
+            logger.info("Iniciando análise heurística...")
+            lines = [line.strip() for line in text.split('\n') if line.strip()]
 
-            soup = BeautifulSoup(response.text, 'html.parser')
-            scripts = soup.find_all('script', type='application/ld+json')
-            target_data = None
+            data = {
+                "title": "", "ingredients": [], "instructions": "",
+                "preparation_time": "", "servings": "",
+                "source": "Arquivo Importado", "image_path": ""
+            }
 
-            # Busca JSON-LD (Schema.org)
-            for script in scripts:
-                if not script.string: continue
-                try:
-                    data = json.loads(script.string)
-                    target_data = IntelligenceService._find_recipe_type(data)
-                    if target_data: break
-                except: continue
+            if not lines:
+                return data
 
-            if not target_data:
-                return "Site não compatível (sem dados Schema.org/Recipe).", None
+            # Tenta achar título (primeira linha válida)
+            data["title"] = lines[0].title()
 
-            return None, IntelligenceService._normalize_schema(target_data, url)
+            # Estratégia simples: procurar palavras-chave
+            ing_start = -1
+            instr_start = -1
+
+            for i, line in enumerate(lines):
+                l = line.lower()
+                if "ingrediente" in l:
+                    ing_start = i
+                elif "preparo" in l or "instruções" in l:
+                    instr_start = i
+
+            # Se achou seções, corta o texto
+            raw_ings = []
+            raw_instr = []
+
+            if ing_start != -1:
+                end = instr_start if instr_start > ing_start else len(lines)
+                raw_ings = lines[ing_start + 1: end]
+
+            if instr_start != -1:
+                raw_instr = lines[instr_start + 1:]
+
+            # Processa Ingredientes com o Scraper Service (Reuso de código)
+            for line in raw_ings:
+                if len(line) > 3:
+                    try:
+                        data["ingredients"].append(
+                            RecipeScraper._parse_ingredient(line))
+                    except Exception as e:
+                        logger.error(f"Erro ao parsear ingrediente '{line}': {e}")
+
+            # Processa Instruções
+            data["instructions"] = "\n".join(
+                [re.sub(r'^[\d\-\.]+\s*', '', l) for l in raw_instr])
+
+            return data
 
         except Exception as e:
-            logger.error(f"Erro Scraping: {e}")
-            return f"Erro de conexão: {str(e)}", None
-
-    @staticmethod
-    def _find_recipe_type(data: Any) -> Optional[Dict]:
-        """Busca recursiva por @type: Recipe."""
-        if isinstance(data, dict):
-            if 'Recipe' in data.get('@type', ''): return data
-            if '@graph' in data: return IntelligenceService._find_recipe_type(data['@graph'])
-        elif isinstance(data, list):
-            for item in data:
-                res = IntelligenceService._find_recipe_type(item)
-                if res: return res
-        return None
-
-    @staticmethod
-    def _normalize_schema(data: Dict, url: str) -> Dict:
-        """Limpa os dados brutos."""
-        # Tempo
-        prep_time = 0
-        time_iso = data.get('totalTime') or data.get('prepTime') or data.get('cookTime')
-        if time_iso:
-            regex = re.compile(r'PT(?:(\d+)H)?(?:(\d+)M)?')
-            match = regex.match(time_iso)
-            if match:
-                h, m = int(match.group(1) or 0), int(match.group(2) or 0)
-                prep_time = (h * 60) + m
-
-        # Ingredientes
-        ingredients = []
-        for ing in data.get('recipeIngredient', []):
-            ingredients.append({"name": ing.strip(), "quantity": "", "unit": ""})
-
-        # Instruções
-        instr = []
-        raw_inst = data.get('recipeInstructions', [])
-        if isinstance(raw_inst, list):
-            for step in raw_inst:
-                if isinstance(step, dict): instr.append(step.get('text', ''))
-                elif isinstance(step, str): instr.append(step)
-        elif isinstance(raw_inst, str): instr.append(raw_inst)
-
-        # Imagem
-        img = data.get('image', '')
-        if isinstance(img, dict): img = img.get('url', '')
-        elif isinstance(img, list): img = img[0] if img else ''
-
-        return {
-            "title": data.get('name', 'Receita Importada'),
-            "preparation_time": str(prep_time) if prep_time else "",
-            "servings": str(data.get('recipeYield', '')).replace("servings", "").strip(),
-            "instructions": "\n".join(instr),
-            "ingredients": ingredients,
-            "image_path": img,
-            "source": url,
-            "additional_instructions": f"Autor: {data.get('author', {}).get('name', 'Web')}"
-        }
-
-    # --- 2. OCR (Defensivo) ---
-    @staticmethod
-    def extract_text_from_image(image_path: str) -> str:
-        if not HAS_OCR:
-            return "ERRO: Biblioteca OCR indisponível neste dispositivo."
-        try:
-            return pytesseract.image_to_string(Image.open(image_path), lang='por').strip()
-        except Exception as e:
-            return f"Erro na leitura: {str(e)}"
-
-    # --- 3. VOZ (Defensivo) ---
-    @staticmethod
-    def listen_dictation() -> str:
-        if not HAS_VOICE:
-            return "ERRO: Reconhecimento de voz indisponível."
-        r = sr.Recognizer()
-        try:
-            with sr.Microphone() as source:
-                r.adjust_for_ambient_noise(source, duration=0.5)
-                audio = r.listen(source, timeout=5, phrase_time_limit=10)
-            return r.recognize_google(audio, language='pt-BR')
-        except Exception as e:
-            return "" # Retorno vazio indica falha silenciosa ou cancelamento
+            logger.error(f"Erro no parse_raw_text: {e}")
+            return {}

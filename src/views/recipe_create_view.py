@@ -1,242 +1,332 @@
 # ARQUIVO: src/views/recipe_create_view.py
 import flet as ft
+import asyncio
 from src.viewmodels.recipe_viewmodel import RecipeViewModel
 from src.services.intelligence_service import IntelligenceService
 from src.database.category_queries import CategoryQueries
+from src.core.logger import get_logger
+
+# Configuração de Logs
+logger = get_logger("src.views.recipe_create")
 
 
 def RecipeCreateView(page: ft.Page) -> ft.View:
+    """
+    VIEW DE CRIAÇÃO/EDIÇÃO DE RECEITA (VERSÃO BLINDADA)
+    - Compatível com PDF, Imagem e Web
+    - Blindado contra falhas de OCR/PDF/Erro UI
+    """
+    logger.info(">>> [INIT] RecipeCreateView V33 (Service Safe Mode)")
+
     vm = RecipeViewModel(page)
     user = page.data.get("logged_in_user")
 
-    # Busca categorias para o Dropdown
-    cat_db = CategoryQueries()
-    categories = cat_db.get_user_categories(user.id)
+    # --- ELEMENTOS VISUAIS ---
+    loading_bar_top = ft.ProgressBar(visible=False, color="orange")
 
-    # --- CAMPOS DE TEXTO ---
-    tf_title = ft.TextField(label="Título da Receita", border_radius=10)
-    tf_time = ft.TextField(label="Tempo (min)", width=150,
-                           keyboard_type=ft.KeyboardType.NUMBER, border_radius=10)
-    tf_servings = ft.TextField(label="Porções", width=150, border_radius=10)
+    # --- HELPER: SNACKBAR (BLINDADO) ---
+    def show_msg(msg, color="blue"):
+        try:
+            page.snack_bar = ft.SnackBar(ft.Text(str(msg)), bgcolor=color)
+            page.snack_bar.open = True
+            page.update()
+        except Exception as e:
+            logger.warning(f"SnackBar ignorado: {e}")
+
+    # --- HELPER: UPDATE SEGURO (BLINDADO) ---
+    def safe_update(control=None):
+        try:
+            if control:
+                if control.page:
+                    control.update()
+            else:
+                page.update()
+        except Exception as e:
+            logger.warning(f"Safe update ignorado: {e}")
+
+    # --- LÓGICA DE PROCESSAMENTO DE ARQUIVO ---
+    def process_file_path(file_path):
+        logger.info(f"Processando: {file_path}")
+        loading_bar_top.visible = True
+        safe_update()
+
+        try:
+            ext = file_path.split('.')[-1].lower()
+            raw_text = ""
+            if ext == "pdf":
+                raw_text = IntelligenceService.read_pdf(file_path)
+            else:
+                raw_text = IntelligenceService.read_image(file_path)
+
+            if raw_text and not raw_text.startswith("ERRO"):
+                data = IntelligenceService.parse_raw_text(raw_text)
+                populate_fields(data, update_ui=True)
+                show_msg("Sucesso!", "green")
+            else:
+                show_msg("Falha na leitura.", "red")
+
+        except Exception as ex:
+            logger.error(f"Erro pipeline: {ex}", exc_info=True)
+            show_msg(f"Erro: {ex}", "red")
+        finally:
+            loading_bar_top.visible = False
+            safe_update()
+
+    # --- FILE PICKER (BLINDADO PARA AWAIT) ---
+    #file_picker = ft.FilePicker()
+    #if file_picker not in page.overlay:
+        #page.overlay.append(file_picker)  # CORREÇÃO: adicionar file_picker no overlay para funcionar
+
+    #async def upload_click(e):
+    #    e.control.disabled = True
+    #    e.control.update()
+    #
+    #    result = await file_picker.pick_files(
+    #        allow_multiple=False,
+    #        allowed_extensions=["pdf", "png", "jpg", "jpeg"]
+    #    )
+
+    #    e.control.disabled = False
+    #    e.control.update()
+
+    #    if result and result.files:
+    #        await process_file_path(result.files[0].path)
+
+    # --- FORMULÁRIO ---
+    input_style = {
+        "border_radius": 12,
+        "bgcolor": ft.Colors.WHITE,
+        "border_color": ft.Colors.OUTLINE_VARIANT,
+        "content_padding": 15,
+        "text_size": 14
+    }
+
+    tf_title = ft.TextField(
+        label="Título *", prefix_icon=ft.Icons.TITLE, **input_style)
+    tf_time = ft.TextField(label="Minutos", width=140,
+                           keyboard_type=ft.KeyboardType.NUMBER, prefix_icon=ft.Icons.TIMER, **input_style)
+    tf_servings = ft.TextField(
+        label="Porções", width=140, prefix_icon=ft.Icons.PEOPLE, **input_style)
+    tf_source = ft.TextField(
+        label="Fonte / URL", prefix_icon=ft.Icons.LINK, **input_style)
+    tf_image = ft.TextField(
+        label="URL Imagem", prefix_icon=ft.Icons.IMAGE, **input_style)
+    tf_instructions = ft.TextField(
+        label="Preparo *", multiline=True, min_lines=5, **input_style)
+    tf_add_instructions = ft.TextField(
+        label="Dicas", multiline=True, **input_style)
+
+    cat_db = CategoryQueries()
+    try:
+        cats = cat_db.get_user_categories(user.id)
+    except Exception:
+        cats = []
 
     dd_category = ft.Dropdown(
-        label="Categoria",
-        options=[ft.dropdown.Option(str(c['id']), c['name'])
-                 for c in categories],
-        border_radius=10,
-        expand=True
+        label="Categoria *",
+        options=[ft.dropdown.Option(str(c['id']), c['name']) for c in cats],
+        expand=True,
+        **input_style
     )
-
-    tf_instructions = ft.TextField(
-        label="Modo de Preparo", multiline=True, min_lines=5, border_radius=10)
-    tf_add_instructions = ft.TextField(
-        label="Dicas Extras", multiline=True, border_radius=10)
-    tf_source = ft.TextField(
-        label="Fonte / Origem (URL ou Livro)", border_radius=10, prefix_icon=ft.Icons.LINK)
-    tf_image = ft.TextField(label="URL da Imagem",
-                            border_radius=10, prefix_icon=ft.Icons.IMAGE)
 
     # --- INGREDIENTES ---
     tf_ing_name = ft.TextField(
-        label="Ingrediente", expand=True, height=40, text_size=14)
-    tf_ing_qty = ft.TextField(label="Qtd", width=80, height=40, text_size=14)
-    tf_ing_unit = ft.TextField(label="Unid", width=80, height=40, text_size=14)
+        label="Nome (ex: Farinha)", expand=True, height=50, bgcolor="white", border_radius=8)
+    tf_ing_qty = ft.TextField(label="Qtd", width=80,
+                              height=50, bgcolor="white", border_radius=8)
+    tf_ing_unit = ft.TextField(
+        label="Unid", width=80, height=50, bgcolor="white", border_radius=8)
+    ingredients_col = ft.Column(spacing=5)
 
-    ingredients_list_view = ft.ListView(height=200, spacing=5)
-
-    def _render_ingredients():
-        ingredients_list_view.controls.clear()
-        for i, ing in enumerate(vm.temp_ingredients):
-            ingredients_list_view.controls.append(
-                ft.Container(
-                    content=ft.Row([
-                        ft.Text(
-                            f"{ing.name} ({ing.quantity} {ing.unit})", expand=True),
-                        ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED_400,
-                                      on_click=lambda e, idx=i: _remove_ingredient(idx))
-                    ]),
-                    bgcolor=ft.Colors.GREY_50, padding=5, border_radius=5
+    def _render_ingredients(update_ui=True):
+        ingredients_col.controls.clear()
+        if not vm.temp_ingredients:
+            ingredients_col.controls.append(
+                ft.Text("Nenhum ingrediente.", size=12, color="grey"))
+        else:
+            for i, ing in enumerate(vm.temp_ingredients):
+                ingredients_col.controls.append(
+                    ft.Container(
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.CIRCLE, size=8,
+                                    color=ft.Colors.ORANGE_400),
+                            ft.Text(f"{ing.name}",
+                                    weight=ft.FontWeight.BOLD, expand=True),
+                            ft.Text(
+                                f"{ing.quantity} {ing.unit}".strip(), color="grey"),
+                            ft.IconButton(ft.Icons.CLOSE, icon_color="red", icon_size=18,
+                                          on_click=lambda e, idx=i: _remove_ing(idx))
+                        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                        bgcolor=ft.Colors.GREY_50,
+                        padding=10,
+                        border_radius=8
+                    )
                 )
-            )
-        page.update()
+        if update_ui:
+            safe_update(ingredients_col)
 
-    def _add_ingredient(e):
+    def _add_ing(e):
         if vm.add_temp_ingredient(tf_ing_name.value, tf_ing_qty.value, tf_ing_unit.value):
             tf_ing_name.value = ""
             tf_ing_qty.value = ""
             tf_ing_unit.value = ""
             tf_ing_name.focus()
-            _render_ingredients()
+            safe_update()
+            _render_ingredients(update_ui=True)
+        else:
+            show_msg("Nome inválido", "red")
 
-    def _remove_ingredient(index):
+    def _remove_ing(index):
         vm.remove_temp_ingredient(index)
-        _render_ingredients()
+        _render_ingredients(update_ui=True)
 
-    # --- FUNÇÕES DE INTELIGÊNCIA ---
-    def show_import_dialog(e):
-        tf_url = ft.TextField(
-            label="Link", hint_text="https://tudogostoso...", autofocus=True)
+    # --- POPULA CAMPOS (PDF, IMAGEM, WEB) ---
+    def populate_fields(data, update_ui=False):
+        if not data:
+            return
+        try:
+            tf_title.value = data.get('title', '')
+            if data.get('preparation_time'):
+                tf_time.value = str(data.get('preparation_time'))
+            if data.get('servings'):
+                tf_servings.value = str(data.get('servings'))
+            tf_instructions.value = data.get('instructions', '')
+            if data.get('image_path'):
+                tf_image.value = data.get('image_path')
+            if data.get('source'):
+                tf_source.value = data.get('source')
 
-        def confirm(e):
-            if not tf_url.value:
-                return
-            page.snack_bar = ft.SnackBar(ft.Text("Baixando..."))
-            page.snack_bar.open = True
-            page.update()
+            if data.get('ingredients'):
+                vm.temp_ingredients = []
+                for ing in data['ingredients']:
+                    vm.add_temp_ingredient(ing['name'], ing.get(
+                        'quantity', ''), ing.get('unit', ''))
 
-            err, data = vm.import_from_url(tf_url.value)
-            dlg.open = False
+            _render_ingredients(update_ui=update_ui)
+            if update_ui:
+                safe_update()
+        except Exception as e:
+            logger.warning(f"Erro ao popular campos: {e}")
 
-            if err:
-                page.snack_bar = ft.SnackBar(
-                    ft.Text(f"Erro: {err}"), bgcolor="red")
-            elif data:
-                tf_title.value = data.get('title', '')
-                tf_time.value = data.get('preparation_time', '')
-                tf_servings.value = data.get('servings', '')
-                tf_instructions.value = data.get('instructions', '')
-                tf_add_instructions.value = data.get(
-                    'additional_instructions', '')
-                tf_source.value = data.get('source', '')
-                tf_image.value = data.get('image_path', '')
-                _render_ingredients()  # Renderiza ingredientes importados
-
-                page.snack_bar = ft.SnackBar(
-                    ft.Text("Importado! Revise os dados."), bgcolor="green")
-            page.update()
-
-        dlg = ft.AlertDialog(title=ft.Text("Importar Site"), content=tf_url,
-                             actions=[ft.ElevatedButton("Importar", on_click=confirm)])
+    # --- DIALOG IMPORT WEB ---
+    def show_link_dialog(e):
+        tf_link = ft.TextField(label="Link", autofocus=True)
+        loading_web = ft.ProgressBar(visible=False, color="blue")
+        dlg = ft.AlertDialog(
+            title=ft.Text("Importar Web"),
+            content=ft.Column(
+                [ft.Text("Cole um link:"), tf_link, loading_web], tight=True, width=400),
+            actions=[
+                ft.TextButton("Cancelar", on_click=lambda e: _close_dlg(dlg)),
+                ft.Button("Importar", on_click=lambda e: _run_import(
+                    tf_link.value, dlg, loading_web))
+            ]
+        )
         page.overlay.append(dlg)
         dlg.open = True
         page.update()
 
-    def start_voice(e):
-        page.snack_bar = ft.SnackBar(
-            ft.Text("Ouvindo... Fale os ingredientes! 🎤"))
-        page.snack_bar.open = True
+    def _close_dlg(dlg):
+        dlg.open = False
         page.update()
 
-        text = IntelligenceService.listen_dictation()
-
-        if text.startswith("ERRO"):
-            page.snack_bar = ft.SnackBar(ft.Text(text), bgcolor="orange")
-        elif text:
-            parts = text.replace(" e ", ",").split(",")
-            count = 0
-            for p in parts:
-                if vm.add_temp_ingredient(p.strip(), "", "") is None:
-                    count += 1
-            _render_ingredients()  # Atualiza visualmente
-            page.snack_bar = ft.SnackBar(
-                ft.Text(f"{count} ingredientes detectados!"), bgcolor="green")
+    def _run_import(url, dlg, bar):
+        if not url:
+            return
+        bar.visible = True
+        dlg.update()
+        err, data = vm.import_from_url(url)
+        bar.visible = False
+        dlg.open = False
+        page.update()
+        if err:
+            show_msg(err, "red")
         else:
-            page.snack_bar = ft.SnackBar(
-                ft.Text("Não entendi o áudio."), bgcolor="grey")
-        page.snack_bar.open = True
+            populate_fields(data, update_ui=True)
+            show_msg("Sucesso!", "green")
         page.update()
 
-    def save_action(e):
+    # --- SAVE RECIPE ---
+    async def btn_save_click(e):
+        if not tf_title.value or not dd_category.value:
+            show_msg("Preencha Título e Categoria.", "red")
+            return
         success, msg = vm.save_recipe(
-            tf_title.value, tf_time.value, tf_servings.value,
-            tf_instructions.value, tf_add_instructions.value,
-            tf_source.value, tf_image.value, dd_category.value
+            tf_title.value, tf_time.value, tf_servings.value, tf_instructions.value,
+            tf_add_instructions.value, tf_source.value, tf_image.value, dd_category.value
         )
-        color = ft.Colors.GREEN if success else ft.Colors.RED
-
         if success:
-            page.snack_bar = ft.SnackBar(content=ft.Text(msg), bgcolor=color)
-            page.snack_bar.open = True
-            page.go("/my_recipes")
+            show_msg(msg, "green")
+            await page.push_route("/my_recipes")
         else:
-            page.dialog = ft.AlertDialog(
-                title=ft.Text("Atenção"), content=ft.Text(msg))
-            page.dialog.open = True
-            page.update()
+            show_msg(msg, "red")
 
-    # --- VERIFICAÇÃO DE EDIÇÃO ---
-    existing_data = vm.load_editing_data()
-    page_title_text = "Nova Receita"
-    if existing_data:
-        page_title_text = "Editar Receita"
-        tf_title.value = existing_data['title']
-        tf_time.value = str(existing_data['preparation_time'])
-        tf_servings.value = existing_data['servings']
-        tf_instructions.value = existing_data['instructions']
-        tf_add_instructions.value = existing_data['additional_instructions']
-        tf_source.value = existing_data['source']
-        tf_image.value = existing_data['image_path']
-        dd_category.value = str(existing_data['category_id'])
-        _render_ingredients()
+    # --- INIT DATA ---
+    existing = vm.load_editing_data()
+    pg_title = "Nova Receita"
+    if existing:
+        pg_title = "Editar Receita"
+        populate_fields(existing, update_ui=False)
+    else:
+        _render_ingredients(update_ui=False)
 
-    # --- VIEW ---
+    # --- VIEW LAYOUT ---
     return ft.View(
         route="/create_recipe",
         appbar=ft.AppBar(
-            title=ft.Text(page_title_text),
-            bgcolor=ft.Colors.WHITE,
-            center_title=True,
-            leading=ft.IconButton(ft.Icons.ARROW_BACK,
-                                  on_click=lambda _: page.go("/my_recipes"))
+            title=ft.Text(pg_title),
+            bgcolor="white",
+            leading=ft.IconButton(
+                ft.Icons.ARROW_BACK, on_click=lambda _: asyncio.create_task(page.push_route("/my_recipes")))
         ),
         controls=[
+            # NÃO adicionar file_picker aqui, pois já está no overlay
             ft.SafeArea(
-                # [CORREÇÃO CRÍTICA] expand=True adicionado ao Container pai
                 expand=True,
                 content=ft.Container(
                     padding=20,
-                    # [CORREÇÃO CRÍTICA] expand=True adicionado ao Container
-                    expand=True,
                     content=ft.Column([
-                        # Cabeçalho com Botão de Importar
-                        ft.Row([
-                            ft.Text("Dados Básicos", size=18,
-                                    weight=ft.FontWeight.BOLD),
-                            ft.Row([
-                                ft.ElevatedButton("Importar Link", icon=ft.Icons.DOWNLOAD,
-                                                  on_click=show_import_dialog,
-                                                  bgcolor=ft.Colors.BLUE_50, color=ft.Colors.BLUE_800,
-                                                  style=ft.ButtonStyle(elevation=0)),
-                                ft.IconButton(
-                                    ft.Icons.MIC, icon_color="blue", tooltip="Voz", on_click=start_voice),
-                            ])
-                        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-
-                        tf_title,
-                        ft.Row([tf_time, tf_servings, dd_category]),
-                        tf_source,
-                        tf_image,
-                        ft.Divider(),
-
-                        ft.Text("Ingredientes", size=18,
-                                weight=ft.FontWeight.BOLD),
-                        ft.Row([tf_ing_name, tf_ing_qty, tf_ing_unit,
-                                ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.Colors.GREEN, icon_size=30, on_click=_add_ingredient)]),
-
+                        loading_bar_top,
                         ft.Container(
-                            content=ingredients_list_view,
-                            bgcolor=ft.Colors.WHITE, border=ft.Border.all(1, ft.Colors.GREY_300), border_radius=10, padding=10
+                            padding=10,
+                            border_radius=10,
+                            bgcolor=ft.Colors.BLUE_50,
+                            border=ft.Border.all(1, ft.Colors.BLUE_100),
+                            content=ft.Row([
+                                ft.Icon(ft.Icons.AUTO_AWESOME, color="blue"),
+                                ft.Column([
+                                    ft.Text("Inteligência",
+                                            weight="bold", color="blue"),
+                                    ft.Text("Web, PDF ou Foto",
+                                            size=10, color="blue")
+                                ], spacing=0, expand=True),
+                                ft.IconButton(
+                                    ft.Icons.PUBLIC, tooltip="Link Web", icon_color="blue", on_click=show_link_dialog),
+                                #ft.IconButton(ft.Icons.UPLOAD_FILE, tooltip="Ler Arquivo", icon_color="blue",
+                                #              on_click=lambda e: asyncio.create_task(upload_click(e))),
+                                #ft.IconButton(ft.Icons.MIC, tooltip="Voz", icon_color="blue", on_click=lambda e: show_msg(
+                                #    "Em breve", "orange"))
+                            ])
                         ),
-
+                        ft.Divider(height=20, color="transparent"),
+                        tf_title,
+                        ft.Row([dd_category, tf_time, tf_servings]),
                         ft.Divider(),
-                        ft.Text("Instruções", size=18,
-                                weight=ft.FontWeight.BOLD),
-                        tf_instructions,
-                        tf_add_instructions,
-
+                        ft.Text("Ingredientes", size=16, weight="bold"),
+                        ft.Row([tf_ing_name, tf_ing_qty, tf_ing_unit, ft.IconButton(
+                            ft.Icons.ADD_CIRCLE, icon_color="green", on_click=_add_ing)]),
+                        ft.Container(content=ingredients_col, border=ft.Border.all(
+                            1, ft.Colors.GREY_300), border_radius=8, padding=10, bgcolor="white"),
+                        ft.Divider(),
+                        ft.Text("Instruções", size=16, weight="bold"),
+                        tf_instructions, tf_add_instructions, tf_source, tf_image,
                         ft.Container(height=20),
-
-                        # O BOTÃO SALVAR ESTÁ AQUI
-                        ft.ElevatedButton("Salvar Receita", on_click=save_action,
-                                          bgcolor=ft.Colors.ORANGE_600, color=ft.Colors.WHITE,
-                                          height=50, width=float('inf')),
-
-                        # Espaço extra no final para garantir scroll confortável
-                        ft.Container(height=50),
-
-                    ], scroll=ft.ScrollMode.AUTO, expand=True)  # A Coluna tem scroll e expande
+                        ft.Button("Salvar Receita", on_click=lambda e: asyncio.create_task(btn_save_click(e)),
+                                  bgcolor="orange", color="white", height=50, width=float("inf")),
+                        ft.Container(height=50)
+                    ], scroll=ft.ScrollMode.AUTO, expand=True)
                 )
             )
         ],
-        bgcolor=ft.Colors.WHITE
+        bgcolor="white"
     )

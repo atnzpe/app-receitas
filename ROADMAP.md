@@ -51,8 +51,8 @@ Este documento é a fonte única da verdade (SSOT) para o progresso do projeto.
 * [ x] **Refinamento de Detalhes:** Exibir explicitamente os campos "Dicas Extras" e "Fonte/Origem" na tela `RecipeDetailView`.
 
 ### **5.3. Módulo de Inteligência (Automação)**
-* [ ] **Importação via Link (Scraping):** * [ ] Extração de metadados (Schema.org) de sites externos.
-    * [ ] Preenchimento automático do formulário de criação.
+* [x] **Importação via Link (Scraping):** * [ ] Extração de metadados (Schema.org) de sites externos.
+    * [x] Preenchimento automático do formulário de criação.
 * [ ] **OCR (Visão Computacional):** Extração de texto de fotos de livros culinários.
 * [ ] **Voice-to-Text:** Ditado de ingredientes via microfone.
 
