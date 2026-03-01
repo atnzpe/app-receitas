@@ -73,25 +73,24 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
             safe_update()
 
     # --- FILE PICKER (BLINDADO PARA AWAIT) ---
-    file_picker = ft.FilePicker()
-    page.overlay.append(file_picker)  # CORREÇÃO: adicionar file_picker no overlay para funcionar
+    #file_picker = ft.FilePicker()
+    #if file_picker not in page.overlay:
+        #page.overlay.append(file_picker)  # CORREÇÃO: adicionar file_picker no overlay para funcionar
 
-    async def upload_click(e):
-        logger.info("Botão Upload.")
-        try:
-            result = await file_picker.pick_files(
-                allow_multiple=False,
-                allowed_extensions=["pdf", "png", "jpg", "jpeg"]
-            )
-            if result and result.files:
-                path = result.files[0].path
-                logger.info(f"Selecionado: {path}")
-                process_file_path(path)
-            else:
-                logger.info("Cancelado.")
-        except Exception as ex:
-            logger.error(f"Erro FilePicker: {ex}", exc_info=True)
-            show_msg("Erro ao abrir janela.", "red")
+    #async def upload_click(e):
+    #    e.control.disabled = True
+    #    e.control.update()
+    #
+    #    result = await file_picker.pick_files(
+    #        allow_multiple=False,
+    #        allowed_extensions=["pdf", "png", "jpg", "jpeg"]
+    #    )
+
+    #    e.control.disabled = False
+    #    e.control.update()
+
+    #    if result and result.files:
+    #        await process_file_path(result.files[0].path)
 
     # --- FORMULÁRIO ---
     input_style = {
@@ -303,10 +302,10 @@ def RecipeCreateView(page: ft.Page) -> ft.View:
                                 ], spacing=0, expand=True),
                                 ft.IconButton(
                                     ft.Icons.PUBLIC, tooltip="Link Web", icon_color="blue", on_click=show_link_dialog),
-                                ft.IconButton(ft.Icons.UPLOAD_FILE, tooltip="Ler Arquivo", icon_color="blue",
-                                              on_click=lambda e: asyncio.create_task(upload_click(e))),
-                                ft.IconButton(ft.Icons.MIC, tooltip="Voz", icon_color="blue", on_click=lambda e: show_msg(
-                                    "Em breve", "orange"))
+                                #ft.IconButton(ft.Icons.UPLOAD_FILE, tooltip="Ler Arquivo", icon_color="blue",
+                                #              on_click=lambda e: asyncio.create_task(upload_click(e))),
+                                #ft.IconButton(ft.Icons.MIC, tooltip="Voz", icon_color="blue", on_click=lambda e: show_msg(
+                                #    "Em breve", "orange"))
                             ])
                         ),
                         ft.Divider(height=20, color="transparent"),
